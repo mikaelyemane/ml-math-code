@@ -1,0 +1,23 @@
+# Article notebooks
+
+One notebook per article in the *Math for ML Engineers* launch series. Each runs the article's code in order and reproduces every number it quotes, plus its figure. They need only NumPy and matplotlib.
+
+| # | Article | Notebook |
+|---|---|---|
+| 01 | The bug at step 47,213: why attention divides by √d_k | [`01-the-bug-at-step-47213.ipynb`](01-the-bug-at-step-47213.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/01-the-bug-at-step-47213.ipynb) |
+| 02 | Adam's bias correction shrinks the first step. Most explanations say the opposite. | [`02-adam-bias-correction.ipynb`](02-adam-bias-correction.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/02-adam-bias-correction.ipynb) |
+| 03 | Why CrossEntropyLoss takes logits, and four other whiteboard derivations | [`03-five-whiteboard-derivations.ipynb`](03-five-whiteboard-derivations.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/03-five-whiteboard-derivations.ipynb) |
+| 04 | Why a float32 gradient check is off by 10⁻³, and the cube root that fixes it | [`04-reverse-mode-autodiff.ipynb`](04-reverse-mode-autodiff.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/04-reverse-mode-autodiff.ipynb) |
+| 05 | FlashAttention never builds the 34 GB score matrix | [`05-flashattention-online-softmax.ipynb`](05-flashattention-online-softmax.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/05-flashattention-online-softmax.ipynb) |
+| 06 | The KV cache in arithmetic: 43 GB per request, and where it goes | [`06-kv-cache-arithmetic.ipynb`](06-kv-cache-arithmetic.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/06-kv-cache-arithmetic.ipynb) |
+| 07 | Why borrowing Code Llama's rope_theta scrambles Llama-2's positions | [`07-rope-is-a-rotation.ipynb`](07-rope-is-a-rotation.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/07-rope-is-a-rotation.ipynb) |
+| 08 | PPO, DPO and GRPO optimize one objective with three estimators | [`08-ppo-dpo-grpo-estimators.ipynb`](08-ppo-dpo-grpo-estimators.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/08-ppo-dpo-grpo-estimators.ipynb) |
+| 09 | A 512-unit layer has room for thousands of features | [`09-superposition-for-engineers.ipynb`](09-superposition-for-engineers.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/09-superposition-for-engineers.ipynb) |
+| 10 | Your accuracy is flat and your probabilities are wrong | [`10-calibration-drift-staleness.ipynb`](10-calibration-drift-staleness.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/10-calibration-drift-staleness.ipynb) |
+| 11 | A third of your fp16 gradients can be zero | [`11-loss-scaling-bit-layouts.ipynb`](11-loss-scaling-bit-layouts.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/11-loss-scaling-bit-layouts.ipynb) |
+| 12 | Chinchilla's 20 tokens per parameter is a fitted constant | [`12-chinchilla-one-page.ipynb`](12-chinchilla-one-page.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/12-chinchilla-one-page.ipynb) |
+| 13 | BatchNorm makes one example's output depend on its batchmates | [`13-batchnorm-vs-layernorm.ipynb`](13-batchnorm-vs-layernorm.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/13-batchnorm-vs-layernorm.ipynb) |
+| 14 | He init keeps the gradient norm and only 7% of the directions | [`14-residual-spectrum.ipynb`](14-residual-spectrum.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/14-residual-spectrum.ipynb) |
+| 15 | Why test error spikes 200× when features equal samples | [`15-double-descent-in-numpy.ipynb`](15-double-descent-in-numpy.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/15-double-descent-in-numpy.ipynb) |
+
+These files are generated from the article sources by `make_notebooks.py` in the book repository. Edit the articles, then regenerate, rather than editing a notebook by hand.

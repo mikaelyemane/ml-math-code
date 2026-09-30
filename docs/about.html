@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Mikael Yemane, Principal Machine Learning Engineer and author of Math for ML Engineers.">
+<link rel="canonical" href="https://mikaelyemane.github.io/ml-math-code/about.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Math for ML Engineers">
+<meta property="og:title" content="Mikael Yemane">
+<meta property="og:description" content="Mikael Yemane, Principal Machine Learning Engineer and author of Math for ML Engineers.">
+<meta property="og:url" content="https://mikaelyemane.github.io/ml-math-code/about.html">
+<meta property="og:image" content="https://mikaelyemane.github.io/ml-math-code/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mikaelyemane.github.io/ml-math-code/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://mikaelyemane.github.io/ml-math-code/#person",
+      "name": "Mikael Yemane",
+      "jobTitle": "Principal Machine Learning Engineer",
+      "alumniOf": {
+        "@type": "CollegeOrUniversity",
+        "name": "St. Mary's College of Maryland"
+      },
+      "url": "https://mikaelyemane.github.io/ml-math-code/about.html",
+      "sameAs": [
+        "https://github.com/mikaelyemane"
+      ]
+    }
+  ]
+}
+</script>
+
+<title>Mikael Yemane</title>
+<!-- About page: the author's professional profile. Companies and roles, no dates, no résumé download.
+     Placeholders: search data-todo (LINKEDIN_URL). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column with a margin rail for company names; one viridis hairline ties it to the book. */
+:root {
+  --paper: #f6f6f9; --surface: #ffffff; --ink: #17142b; --muted: #595670; --rule: #dddbe7; --accent: #1d7471; --accent-ink: #ffffff;
+  --viridis: linear-gradient(90deg,#440154,#3e4989,#26828e,#35b779,#b5de2b,#fde725);
+  --f-display: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --f-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0f0c19; --surface: #171329; --ink: #ecebf4; --muted: #a29eb8; --rule: #2a2640; --accent: #6ece58; --accent-ink: #0f0c19; color-scheme: dark; } }
+:root[data-theme="dark"] { --paper: #0f0c19; --surface: #171329; --ink: #ecebf4; --muted: #a29eb8; --rule: #2a2640; --accent: #6ece58; --accent-ink: #0f0c19; color-scheme: dark; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 1rem; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.wrap { max-width: 1040px; margin-inline: auto; padding-inline: 20px; }
+.hair { height: 3px; background: var(--viridis); }
+
+.nav .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 16px; }
+.nav .me { font-family: var(--f-display); font-size: 1.15rem; font-weight: 500; text-decoration: none; }
+.nav ul { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 24px; list-style: none; margin: 0; padding: 0; }
+.nav ul a { font-family: var(--f-mono); font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
+.nav ul a:hover { color: var(--ink); }
+
+.hero { padding-block: clamp(44px, 8vw, 96px) clamp(32px, 5vw, 56px); }
+.eyebrow { font-family: var(--f-mono); font-size: .8125rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0; }
+h1 { font-family: var(--f-display); font-weight: 500; font-size: clamp(2.6rem, 6.4vw, 4.6rem); line-height: 1.02; letter-spacing: -.02em; margin: 14px 0 0; }
+.role { font-family: var(--f-display); font-style: italic; font-size: clamp(1.3rem, 2.6vw, 1.7rem); color: var(--muted); margin: 10px 0 0; line-height: 1.3; }
+.intro { max-width: 62ch; margin-top: 26px; display: flex; flex-direction: column; gap: 14px; font-size: 1.125rem; }
+.intro p { margin: 0; }
+.ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 18px; font: 600 .9375rem var(--f-body); color: var(--ink); text-decoration: none; background: transparent; border: 1px solid var(--ink); border-radius: 3px; cursor: pointer; }
+.btn:hover { background: var(--ink); color: var(--paper); }
+.btn.go { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.go:hover { filter: brightness(1.08); background: var(--accent); color: var(--accent-ink); }
+
+.results { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 1px solid var(--rule); }
+.results div { padding: 20px 16px 18px 0; }
+.results div + div { padding-left: 16px; border-left: 1px solid var(--rule); }
+.results b { display: block; font-family: var(--f-display); font-weight: 500; font-size: clamp(1.7rem, 3.4vw, 2.2rem); line-height: 1; font-variant-numeric: tabular-nums; }
+.results span { display: block; margin-top: 8px; font-size: .8125rem; color: var(--muted); line-height: 1.4; }
+
+section.s { padding-block: clamp(52px, 7vw, 88px); }
+.sh { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+h2 { font-family: var(--f-display); font-weight: 500; font-size: clamp(1.8rem, 3.6vw, 2.4rem); line-height: 1.1; margin: 0; }
+.sh span { font-family: var(--f-mono); font-size: .75rem; color: var(--muted); letter-spacing: .05em; text-transform: uppercase; }
+
+.job { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 8px 40px; padding-block: 28px; border-top: 1px solid var(--rule); }
+.job:last-child { border-bottom: 1px solid var(--rule); }
+.job h3 { font-family: var(--f-display); font-weight: 500; font-size: 1.55rem; line-height: 1.15; margin: 0; }
+.job .ti { font-family: var(--f-mono); font-size: .8125rem; color: var(--muted); margin: 8px 0 0; line-height: 1.55; }
+.job .domain { display: inline-block; margin-top: 10px; font-size: .75rem; font-family: var(--f-mono); color: var(--accent); }
+.job ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.job li::marker { color: var(--accent); }
+.job .desc { margin: 0; min-width: 0; max-width: 62ch; }
+.grid3 a { text-decoration-color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+.grid3 a:hover { color: var(--accent); }
+
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 40px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px 40px; }
+h4 { font-family: var(--f-mono); font-weight: 500; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.grid2 p, .grid3 p { margin: 0; }
+
+.bookcard { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 24px 36px; align-items: center; background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: clamp(18px, 3vw, 28px); }
+.bookcard img { width: 100%; max-width: 150px; height: auto; aspect-ratio: 7/9; display: block; box-shadow: 0 16px 30px -18px rgba(10,10,30,.6); }
+.bookcard h3 { font-family: var(--f-display); font-weight: 500; font-size: 1.6rem; margin: 0; line-height: 1.15; }
+.bookcard p { margin: 8px 0 0; color: var(--muted); max-width: 60ch; }
+
+.contact { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-top: 18px; }
+.email { font-family: var(--f-mono); font-size: clamp(1rem, 2.6vw, 1.25rem); user-select: all; word-break: break-all; }
+.links { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 24px 0 0; padding: 0; list-style: none; }
+.links a { font-weight: 500; text-decoration-color: var(--accent); text-underline-offset: 4px; text-decoration-thickness: 2px; }
+.lede { max-width: 60ch; color: var(--muted); margin: 0; font-size: 1.0625rem; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-block: 24px 40px; border-top: 1px solid var(--rule); font-family: var(--f-mono); font-size: .75rem; color: var(--muted); }
+
+@media (max-width: 960px) {
+  .results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .results div:nth-child(3) { border-left: 0; padding-left: 0; }
+  .results div:nth-child(n+3) { border-top: 1px solid var(--rule); }
+  .grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .job { grid-template-columns: minmax(0, 1fr); }
+  .bookcard { grid-template-columns: 110px minmax(0, 1fr); }
+}
+@media (max-width: 540px) {
+  .results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .results div { padding-left: 0 !important; border-left: 0 !important; }
+  .results div:nth-child(n+3) { border-top: 1px solid var(--rule); }
+  .results div:nth-child(even) { padding-left: 16px !important; border-left: 1px solid var(--rule) !important; }
+  .grid2, .grid3 { grid-template-columns: minmax(0, 1fr); }
+  .bookcard { grid-template-columns: minmax(0, 1fr); }
+  .nav ul li.opt { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="hair" aria-hidden="true"></div>
+<nav class="nav" aria-label="Site">
+  <div class="wrap">
+    <a class="me" href="#top">Mikael Yemane</a>
+    <ul>
+      <li class="opt"><a href="#work">Work</a></li>
+      <li class="opt"><a href="#skills">Skills</a></li>
+      <li><a href="index.html">The book</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <p class="eyebrow">Salt Lake City · Machine learning engineering</p>
+    <h1>Mikael Yemane</h1>
+    <p class="role">Principal Machine Learning Engineer and team lead</p>
+    <div class="intro">
+      <p>I build ML systems other people depend on: predictive maintenance for aircraft, wildfire risk on the electrical grid, revenue forecasting and sales intelligence for enterprise software.</p>
+      <p>Today I lead an ML team building predictive-maintenance systems for commercial aviation. I like owning a problem end to end, from the data pipeline to the model to the decision someone makes with it.</p>
+    </div>
+    <div class="ctas">
+      <a class="btn go" href="#contact">Get in touch</a>
+      <a class="btn" href="index.html">Read about the book</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="results" aria-label="Selected results">
+    <div><b>$10M+</b><span>new contract won on the strength of an F/A-18 prototype I built</span></div>
+    <div><b>$2M+</b><span>cost savings from that F/A-18 predictive system</span></div>
+    <div><b>7 yrs</b><span>shipping production ML across four industries</span></div>
+    <div><b>826 pp</b><span>deriving the mathematics of modern AI, in the book I wrote</span></div>
+  </div>
+</div>
+
+<section class="s" id="work">
+  <div class="wrap">
+    <div class="sh"><h2>Work</h2><span>Aerospace · Energy · Enterprise software · Government</span></div>
+    <article class="job">
+      <div><h3>Aerospace</h3><p class="ti">Principal ML Engineer, Team Lead</p><span class="domain">commercial aviation · current</span></div>
+      <p class="desc">I lead a cross-functional team of ML, MLOps and data engineers building predictive-maintenance systems for airline fleets. The work runs end to end, from the data pipelines and deployment infrastructure to the alerts maintenance crews act on, and a lot of it is about making models dependable enough to run a fleet on.</p>
+    </article>
+    <article class="job">
+      <div><h3>Pacific Gas &amp; Electric</h3><p class="ti">Senior Data Scientist</p><span class="domain">energy · wildfire risk</span></div>
+      <p class="desc">Computer vision on drone imagery of the electrical grid, used to spot deteriorating equipment and wildfire risk so inspection crews could go where they mattered most. Much of the job was building the pipelines to process imagery at that scale.</p>
+    </article>
+    <article class="job">
+      <div><h3>Microsoft</h3><p class="ti">Senior ML Engineer</p><span class="domain">enterprise software</span></div>
+      <p class="desc">Sales-intelligence systems that combined many signals about companies and their behavior to help large sales teams find and prioritize the right accounts.</p>
+    </article>
+    <article class="job">
+      <div><h3>Okta</h3><p class="ti">Senior ML Engineer</p><span class="domain">enterprise software</span></div>
+      <p class="desc">Churn and revenue forecasting, taken from model to production and turned into concrete retention and account decisions for sales and executive leadership.</p>
+    </article>
+    <article class="job">
+      <div><h3>Accenture</h3><p class="ti">ML Engineer, Technical Lead</p><span class="domain">federal services</span></div>
+      <p class="desc">Technical lead for MLOps on high-traffic production models at a federal agency: CI/CD for models, large-scale Spark and Databricks data pipelines, and a good deal of cloud cost work.</p>
+    </article>
+    <article class="job">
+      <div><h3>Booz Allen Hamilton</h3><p class="ti">Data Scientist</p><span class="domain">defense aviation</span></div>
+      <p class="desc">Built the prototype deep-learning predictive-maintenance system for the U.S. Navy's F/A-18 Super Hornet fleet. It saved more than $2M, and the prototype won a new contract worth more than $10M.</p>
+    </article>
+  </div>
+</section>
+
+<section class="s" id="skills" style="padding-top:0">
+  <div class="wrap">
+    <div class="sh"><h2>Skills</h2></div>
+    <div class="grid2">
+      <div><h4>ML and data</h4><p>PyTorch, TensorFlow, Keras, scikit-learn, MLflow, Spark, pandas, NumPy</p></div>
+      <div><h4>Cloud and MLOps</h4><p>Databricks, Unity Catalog, AWS, Azure, Terraform, GitLab CI/CD, Jenkins</p></div>
+      <div><h4>Languages</h4><p>Python, SQL, C/C++, Java, R, MATLAB, Bash</p></div>
+      <div><h4>Mathematics</h4><p>Optimization, applied probability and statistics, time series, stochastic processes, Monte Carlo and numerical methods</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" style="padding-top:0">
+  <div class="wrap grid3">
+    <div><h4>Speaking</h4><p><a href="https://papers.phmsociety.org/index.php/phmap/issue/view/64">&ldquo;MLOps for PHM Systems&rdquo;</a>, paper and talk, PHM Society Asia-Pacific Conference, Tokyo, 2023</p></div>
+    <div><h4>Education</h4><p>B.S. Mathematics and B.A. Economics, minor in Computer Science, St. Mary's College of Maryland</p></div>
+    <div><h4>Independent</h4><p>Builds quantitative trading systems, from data ingestion and backtesting to execution and risk</p></div>
+  </div>
+</section>
+
+<section class="s" id="book" style="padding-top:0">
+  <div class="wrap">
+    <div class="bookcard">
+      <img src="assets/cover-front.jpg" alt="Cover of Math for ML Engineers" width="700" height="900">
+      <div>
+        <h4>Author of</h4>
+        <h3>Math for ML Engineers: From Backprop to RLHF</h3>
+        <p>826 pages deriving the mathematics of modern AI, from linear algebra to the Transformer, diffusion, RLHF and mechanistic interpretability, with tested code for every algorithm.</p>
+        <div class="ctas" style="margin-top:18px"><a class="btn" href="index.html">See the book</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="contact" style="padding-top:0">
+  <div class="wrap">
+    <div class="sh"><h2>Contact</h2></div>
+    <p class="lede">Write to me about speaking, podcasts, collaborations, or the book.</p>
+    <div class="contact">
+      <span class="email" id="email">mikael.a.yemane@gmail.com</span>
+      <button class="btn" type="button" data-copy="email">Copy address</button>
+    </div>
+    <ul class="links">
+      <li><a href="https://github.com/mikaelyemane">GitHub</a></li>
+    </ul>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>© Mikael Yemane</span><span>Salt Lake City</span></div></footer>
+
+<script>
+(function () {
+  document.querySelectorAll('[data-copy]').forEach(function (btn) {
+    var label = btn.textContent;
+    btn.addEventListener('click', function () {
+      var el = document.getElementById(btn.getAttribute('data-copy'));
+      function flash(m) { btn.textContent = m; setTimeout(function () { btn.textContent = label; }, 2000); }
+      function fallback() { var r = document.createRange(); r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); flash('Selected, press Ctrl+C'); }
+      try { navigator.clipboard.writeText(el.textContent.trim()).then(function () { flash('Copied'); }, fallback); } catch (e) { fallback(); }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
