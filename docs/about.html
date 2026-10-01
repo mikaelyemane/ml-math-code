@@ -42,7 +42,7 @@
 }
 </script>
 <title>Mikael Yemane</title>
-<!-- About page: the author's professional profile, set as back-matter pages of the book to match index.html.
+<!-- About page: the author's professional profile, in the book page's palette and type.
      Companies and roles, no dates, no résumé download. The current employer is never named. -->
 <link rel="preload" href="assets/fonts/lm-roman-normal-400.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -51,17 +51,17 @@
 @font-face{font-family:"LM Roman";src:url(assets/fonts/lm-roman-normal-700.woff2) format("woff2");font-style:normal;font-weight:700;font-display:swap}
 @font-face{font-family:"LM Roman Caps";src:url(assets/fonts/lm-roman-caps-normal-400.woff2) format("woff2");font-style:normal;font-weight:400;font-display:swap}
 @font-face{font-family:"LM Mono";src:url(assets/fonts/lm-mono-normal-400.woff2) format("woff2");font-style:normal;font-weight:400;font-display:swap}
-/* Layout: the same desk of paper sheets as the book page; each sheet is one back-matter page with running head and rule. */
+/* Layout: a web profile in the book page's palette and type, deliberately not set as book pages (no running heads, folios or boxes). */
 :root {
   color-scheme: light;
   --desk: #e3e3e9;
-  --sheet: #ffffff;
+  --panel: #ffffff;
   --ink: #141414;
   --muted: #5d5d66;
   --rule: #1a1a1a;
-  --hair: #d6d6dc;
+  --hair: #dcdce2;
   --blue: #2a5699;
-  --green: #2e7d4f;
+  --tint: #eef2f9;
   --f-roman: "LM Roman", "Latin Modern Roman", "Computer Modern", Georgia, serif;
   --f-caps: "LM Roman Caps", "LM Roman", Georgia, serif;
   --f-mono: "LM Mono", "Latin Modern Mono", ui-monospace, Menlo, monospace;
@@ -69,233 +69,166 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-body { margin: 0; background: var(--desk); color: var(--ink); font-family: var(--f-roman); font-size: 1.125rem; line-height: 1.5; font-kerning: normal; -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--desk); color: var(--ink); font-family: var(--f-roman); font-size: 1.125rem; line-height: 1.55; font-kerning: normal; -webkit-font-smoothing: antialiased; }
 a { color: var(--blue); text-underline-offset: 3px; }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
-.desk { padding-inline: 16px; padding-block: 28px 64px; display: flex; flex-direction: column; align-items: center; gap: 36px; }
+h1, h2, h3 { font-family: var(--f-roman); font-weight: 700; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+.page { max-width: 1080px; margin-inline: auto; padding: 28px 16px 56px; display: flex; flex-direction: column; gap: 24px; }
 
-/* top strip, identical to the book page */
-.strip { width: 100%; max-width: 1080px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px 24px; flex-wrap: wrap; font-family: var(--f-caps); letter-spacing: .06em; font-size: 1rem; }
+/* top strip, shared with the book page */
+.strip { display: flex; justify-content: space-between; align-items: baseline; gap: 12px 24px; flex-wrap: wrap; font-family: var(--f-caps); letter-spacing: .06em; font-size: 1rem; margin-bottom: 8px; }
 .strip nav { display: flex; gap: 6px 20px; flex-wrap: wrap; }
 .strip a { color: var(--ink); text-decoration: none; }
 .strip a:hover, .strip a[aria-current] { color: var(--blue); }
 
-/* sheet */
-.sheet { position: relative; width: 100%; max-width: 760px; background: var(--sheet); box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 18px 40px -22px rgba(20, 20, 40, .35); padding: clamp(28px, 6vw, 72px) clamp(20px, 7vw, 84px) clamp(40px, 6vw, 64px); scroll-margin-top: 20px; }
-.rh { display: flex; justify-content: space-between; gap: 12px; font-style: italic; font-size: .95rem; border-bottom: 0.6px solid var(--rule); padding-bottom: 6px; margin-bottom: 36px; }
-h1, h2, h3 { font-family: var(--f-roman); font-weight: 700; margin: 0; text-wrap: balance; }
-h2.chap { font-size: clamp(1.9rem, 4.6vw, 2.5rem); line-height: 1.12; border-top: 0.8px solid var(--rule); padding-top: 18px; margin-top: 8px; margin-bottom: 30px; }
-p { margin: 0; hyphens: auto; }
-.prose p + p { text-indent: 1.5em; }
-.prose p { text-align: justify; }
+/* panels: rounded web cards, not paper sheets */
+.panel { background: var(--panel); border: 1px solid var(--hair); border-radius: 10px; padding: clamp(24px, 4.5vw, 48px); scroll-margin-top: 20px; }
+.eyebrow { font-family: var(--f-caps); color: var(--blue); letter-spacing: .06em; font-size: 1rem; }
+.sec-head { display: flex; flex-direction: column; gap: 4px; margin-bottom: 26px; }
+.sec-head h2 { font-size: clamp(1.6rem, 3.4vw, 2.1rem); line-height: 1.15; }
 
-/* title spread: title page beside a results page */
-.spread { width: 100%; max-width: 1080px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 40px); align-items: stretch; }
-.spread .sheet { max-width: none; }
-.titlepage { text-align: center; display: flex; flex-direction: column; justify-content: center; padding-block: clamp(40px, 7vw, 80px) clamp(40px, 7vw, 72px); }
-.titlepage .place { font-family: var(--f-caps); letter-spacing: .08em; font-size: 1rem; color: var(--muted); }
-.titlepage h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); line-height: 1.06; margin-top: 18px; }
-.titlepage .sub { font-style: italic; font-size: clamp(1.15rem, 2.2vw, 1.4rem); margin-top: 12px; }
-.titlepage hr { width: 90px; border: 0; border-top: 0.8px solid var(--rule); margin: 28px auto; }
-.titlepage .tag { margin: 0 auto; max-width: 34ch; font-size: 1.05rem; color: var(--muted); }
-.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 30px; }
-.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 18px; font-family: var(--f-roman); font-size: 1rem; color: var(--ink); text-decoration: none; background: transparent; border: 0.8px solid var(--rule); cursor: pointer; }
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: center; }
+.hero h1 { font-size: clamp(2.5rem, 6vw, 3.9rem); line-height: 1.02; letter-spacing: -.005em; margin-top: 10px; }
+.hero .role { font-style: italic; font-size: clamp(1.2rem, 2.4vw, 1.45rem); color: var(--muted); margin-top: 10px; }
+.hero .intro { margin-top: 22px; display: flex; flex-direction: column; gap: 12px; max-width: 58ch; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 18px; font-family: var(--f-roman); font-size: 1rem; color: var(--ink); text-decoration: none; background: transparent; border: 0.8px solid var(--rule); border-radius: 6px; cursor: pointer; }
 .btn:hover { background: #f3f3f6; }
-.btn.solid { background: var(--ink); color: var(--sheet); }
+.btn.solid { background: var(--ink); color: var(--panel); }
 .btn.solid:hover { background: #333; }
+.stats { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-left: 2px solid var(--blue); padding-left: clamp(18px, 3vw, 28px); }
+.stats li { padding: 12px 0; }
+.stats li + li { border-top: 1px solid var(--hair); }
+.stats b { display: block; font-size: clamp(1.6rem, 3vw, 2rem); line-height: 1.05; font-variant-numeric: tabular-nums; }
+.stats span { display: block; margin-top: 4px; font-size: .95rem; color: var(--muted); line-height: 1.4; }
 
-/* results, set like a table in the book */
-.tbl-cap { font-family: var(--f-caps); color: var(--blue); font-size: 1rem; margin-bottom: 10px; }
-.tbl-cap i { font-family: var(--f-roman); color: var(--ink); }
-.results { width: 100%; border-collapse: collapse; border-top: 1.2px solid var(--rule); border-bottom: 1.2px solid var(--rule); }
-.results th, .results td { text-align: left; vertical-align: baseline; padding: 11px 0; }
-.results tr + tr th, .results tr + tr td { border-top: 0.6px solid var(--hair); }
-.results th { font-weight: 700; font-size: 1.3rem; font-variant-numeric: tabular-nums; white-space: nowrap; padding-right: 18px; width: 1%; }
-.results td { font-size: 1rem; line-height: 1.4; }
-.note { margin-top: 12px; font-size: .9rem; color: var(--muted); font-style: italic; }
+/* work */
+.job { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 8px 40px; padding: 22px 0; }
+.job + .job { border-top: 1px solid var(--hair); }
+.job h3 { font-size: 1.25rem; line-height: 1.25; }
+.job .ti { font-style: italic; color: var(--muted); font-size: 1rem; margin-top: 4px; }
+.chip { display: inline-block; white-space: nowrap; margin-top: 10px; padding: 2px 10px; border-radius: 999px; background: var(--tint); color: var(--blue); font-family: var(--f-caps); font-size: .85rem; letter-spacing: .03em; }
+.job .desc { max-width: 64ch; }
+.why { margin-top: 26px; padding: 18px 22px; background: var(--tint); border-radius: 8px; }
+.why p + p { margin-top: 6px; }
 
-/* boxes, after the book's tcolorbox styles */
-.box { position: relative; border: 1.2px solid var(--c, var(--blue)); padding: 22px 20px 16px; margin: 32px 0 4px; }
-.box .cap { position: absolute; top: -0.8em; left: 14px; background: var(--sheet); padding: 0 8px; font-family: var(--f-caps); color: var(--c, var(--blue)); font-size: 1rem; line-height: 1.6; }
-.box .cap i { font-family: var(--f-roman); }
-.box.lens { --c: var(--green); }
+/* skills */
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 40px; }
+.grid h3 { font-family: var(--f-caps); font-weight: 400; color: var(--blue); font-size: 1rem; letter-spacing: .04em; margin-bottom: 6px; }
+.grid p { font-size: 1rem; line-height: 1.5; }
 
-/* work entries, set like a description list */
-.work { display: flex; flex-direction: column; }
-.job { display: grid; grid-template-columns: 2.4em minmax(0, 1fr); gap: 0 10px; padding: 20px 0; }
-.job + .job { border-top: 0.6px solid var(--hair); }
-.job .n { font-weight: 700; font-variant-numeric: tabular-nums; }
-.job h3 { font-size: 1.2rem; line-height: 1.3; }
-.job .meta { margin-top: 2px; font-style: italic; color: var(--muted); font-size: 1rem; }
-.job .meta .dom { font-style: normal; font-family: var(--f-caps); color: var(--blue); letter-spacing: .02em; }
-.job p.desc { margin-top: 8px; text-align: justify; }
-
-/* skills, set like an index */
-.index { columns: 2; column-gap: 40px; }
-.index div { break-inside: avoid; margin-bottom: 18px; }
-.index dt { font-weight: 700; }
-.index dd { margin: 2px 0 0 1em; }
-.index dl { margin: 0; }
-
-/* book plate */
-.plate { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 20px 32px; align-items: center; }
-.plate img { width: 100%; height: auto; aspect-ratio: 7/9; display: block; box-shadow: 0 16px 30px -18px rgba(10,10,30,.6), 0 0 0 1px rgba(0,0,0,.08); }
-.plate h3 { font-size: 1.35rem; line-height: 1.2; }
+/* book */
+.plate { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 20px 36px; align-items: center; }
+.plate img { width: 100%; height: auto; aspect-ratio: 7/9; display: block; border-radius: 2px; box-shadow: 0 16px 30px -18px rgba(10,10,30,.6), 0 0 0 1px rgba(0,0,0,.08); }
+.plate h2 { font-size: clamp(1.4rem, 3vw, 1.75rem); line-height: 1.2; margin-top: 6px; }
 .plate .sub { font-style: italic; margin-top: 2px; }
-.plate p.d { margin-top: 10px; color: var(--muted); font-size: 1rem; }
-.plate .actions { justify-content: flex-start; margin-top: 18px; }
+.plate p.d { margin-top: 10px; color: var(--muted); font-size: 1rem; max-width: 60ch; }
+.plate .actions { margin-top: 18px; }
 
 /* contact */
-.contact { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-top: 22px; }
+.contact { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-top: 18px; }
 .email { font-family: var(--f-mono); font-size: clamp(1rem, 2.6vw, 1.15rem); user-select: all; word-break: break-all; }
-.small { font-size: .95rem; color: var(--muted); line-height: 1.45; }
-.colophon { margin-top: 36px; }
-.colophon .small + .small { margin-top: 8px; }
+.lede { color: var(--muted); max-width: 60ch; }
+.links { display: flex; flex-wrap: wrap; gap: 8px 24px; list-style: none; margin: 20px 0 0; padding: 0; font-size: 1rem; }
+footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: .95rem; color: var(--muted); padding-top: 4px; }
 
-@media (max-width: 860px) {
-  .spread { grid-template-columns: minmax(0, 1fr); }
-  .spread .sheet { max-width: 760px; justify-self: center; width: 100%; }
+@media (max-width: 900px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 600px) {
-  .index { columns: 1; }
-  .plate { grid-template-columns: 96px minmax(0, 1fr); gap: 16px 18px; align-items: start; }
-}
-@media (max-width: 400px) { .box .cap .x { display: none; } }
-@media (max-width: 520px) {
-  body { font-size: 1.0625rem; }
-  .rh span:last-child { display: none; }
-  .strip nav { gap: 6px 14px; font-size: .92rem; letter-spacing: .02em; }
+@media (max-width: 720px) {
   .job { grid-template-columns: minmax(0, 1fr); }
-  .job .n { display: none; }
-  .prose p, .job p.desc { text-align: left; }
-  .box .cap { font-size: .88rem; white-space: nowrap; left: 10px; padding: 0 6px; }
-  .box { padding-top: 24px; }
+}
+@media (max-width: 560px) {
+  body { font-size: 1.0625rem; }
+  .grid { grid-template-columns: minmax(0, 1fr); }
+  .plate { grid-template-columns: 96px minmax(0, 1fr); gap: 16px 18px; align-items: start; }
+  .strip nav { gap: 6px 14px; font-size: .92rem; letter-spacing: .02em; }
 }
 </style>
 </head>
 <body>
 
-<div class="desk">
+<div class="page">
   <div class="strip">
     <a href="index.html">Math for ML Engineers</a>
     <nav aria-label="Site"><a href="#work">Work</a><a href="#skills">Skills</a><a href="#contact">Contact</a><a href="about.html" aria-current="page">Author</a></nav>
   </div>
 
-  <div class="spread" id="top">
-    <header class="sheet titlepage">
-      <p class="place">Salt Lake City</p>
+  <header class="panel hero" id="top">
+    <div>
+      <p class="eyebrow">Machine learning engineering</p>
       <h1>Mikael Yemane</h1>
-      <p class="sub">Principal Machine Learning Engineer</p>
-      <hr>
-      <p class="tag">Seven years of production ML across aerospace, energy, enterprise software and government. Author of <i>Math for ML Engineers</i>.</p>
+      <p class="role">Principal Machine Learning Engineer and team lead</p>
+      <div class="intro">
+        <p>I build ML systems other people depend on: predictive maintenance for aircraft, wildfire risk on the electrical grid, revenue forecasting and sales intelligence for enterprise software.</p>
+        <p>Today I lead an ML team building predictive-maintenance systems for commercial aviation. I like owning a problem end to end, from the data pipeline to the model to the decision someone makes with it.</p>
+      </div>
       <div class="actions">
         <a class="btn solid" href="#contact">Get in touch</a>
-        <a class="btn" href="index.html">The book</a>
+        <a class="btn" href="index.html">Read about the book</a>
       </div>
-    </header>
-
-    <section class="sheet" aria-labelledby="results-cap">
-      <div class="rh"><span>Selected Results</span><span>Mikael Yemane</span></div>
-      <p class="tbl-cap" id="results-cap">Table 1 · <i>What the work produced</i></p>
-      <table class="results">
-        <tr><th scope="row">$10M+</th><td>New contract won by an F/A-18 predictive-maintenance prototype I built</td></tr>
-        <tr><th scope="row">$2M+</th><td>Cost savings delivered by that F/A-18 system</td></tr>
-        <tr><th scope="row">97%</th><td>Predictive accuracy of the churn and ARR forecasting models I took to production</td></tr>
-        <tr><th scope="row">7 yrs</th><td>Shipping production ML across four industries</td></tr>
-        <tr><th scope="row">826 pp</th><td>Deriving the mathematics of modern AI, in the book I wrote</td></tr>
-      </table>
-      <p class="note">Figures are from the roles described under Work.</p>
-    </section>
-  </div>
-
-  <article class="sheet" id="profile">
-    <div class="rh"><span>About the Author</span><span>Mikael Yemane</span></div>
-    <h2 class="chap">About the Author</h2>
-    <div class="prose">
-      <p>I build machine-learning systems that other people depend on: predictive maintenance for aircraft, wildfire risk on the electrical grid, revenue forecasting and sales intelligence for enterprise software.</p>
-      <p>Today I lead an ML team building predictive-maintenance systems for commercial aviation. I like owning a problem end to end, from the data pipeline to the model to the decision someone makes with it.</p>
     </div>
-    <div class="box lens" aria-label="Practitioner Lens">
-      <span class="cap">Practitioner Lens<span class="x"> · <i>Why a math book</i></span></span>
-      <p>I have onboarded a lot of ML engineers. The ones who struggled were not short on tooling; they were short on the math underneath it. The book is the one I kept wishing I could hand them.</p>
-    </div>
-  </article>
+    <ul class="stats" aria-label="Selected results">
+      <li><b>$10M+</b><span>new contract won by an F/A-18 prototype I built</span></li>
+      <li><b>$2M+</b><span>cost savings from that F/A-18 predictive system</span></li>
+      <li><b>7 yrs</b><span>shipping production ML across four industries</span></li>
+      <li><b>826 pp</b><span>deriving the mathematics of modern AI, in the book I wrote</span></li>
+    </ul>
+  </header>
 
-  <article class="sheet" id="work">
-    <div class="rh"><span>Work</span><span>Mikael Yemane</span></div>
-    <h2 class="chap">Work</h2>
-    <div class="work">
-      <section class="job">
-        <span class="n">1</span>
-        <div>
-          <h3>Aerospace</h3>
-          <p class="meta">Principal ML Engineer, Team Lead · <span class="dom">predictive maintenance · current</span></p>
-          <p class="desc">I lead a cross-functional team of ML, MLOps and data engineers building predictive-maintenance systems for airline fleets. The work runs end to end, from data pipelines and deployment infrastructure to the alerts maintenance crews act on. Most of it is making models dependable enough to run a fleet on.</p>
-        </div>
-      </section>
-      <section class="job">
-        <span class="n">2</span>
-        <div>
-          <h3>Pacific Gas &amp; Electric</h3>
-          <p class="meta">Senior Data Scientist · <span class="dom">energy · wildfire risk</span></p>
-          <p class="desc">I built computer-vision models over drone imagery of California&rsquo;s electrical grid to flag deteriorating equipment and wildfire-ignition risk. Distributed pipelines turned raw drone video into per-asset risk scores that decided where inspection crews went first.</p>
-        </div>
-      </section>
-      <section class="job">
-        <span class="n">3</span>
-        <div>
-          <h3>Microsoft</h3>
-          <p class="meta">Senior ML Engineer · <span class="dom">sales intelligence</span></p>
-          <p class="desc">I built sales-intelligence and lead-ranking systems used by thousands of sellers. They combined geographic, firmographic, technographic and behavioral signals into production pipelines that ranked high-value prospects across the product portfolio.</p>
-        </div>
-      </section>
-      <section class="job">
-        <span class="n">4</span>
-        <div>
-          <h3>Okta</h3>
-          <p class="meta">Senior ML Engineer · <span class="dom">revenue forecasting</span></p>
-          <p class="desc">I built churn and ARR forecasting models across the revenue base and took them to production, improving performance by 13% to 97% predictive accuracy. I presented the results to sales leadership and the C-suite as decisions on at-risk accounts and retention.</p>
-        </div>
-      </section>
-      <section class="job">
-        <span class="n">5</span>
-        <div>
-          <h3>Accenture</h3>
-          <p class="meta">ML Engineer, Technical Lead · <span class="dom">federal services</span></p>
-          <p class="desc">I led MLOps for production models at a federal agency, with CI/CD pipelines serving millions of API calls a day. I refactored petabyte-scale ETL on Spark and Databricks and redesigned a model architecture that doubled performance while cutting AWS spend roughly in half.</p>
-        </div>
-      </section>
-      <section class="job">
-        <span class="n">6</span>
-        <div>
-          <h3>Booz Allen Hamilton</h3>
-          <p class="meta">Data Scientist · <span class="dom">defense aviation</span></p>
-          <p class="desc">I built the prototype deep-learning predictive-maintenance system for the U.S. Navy&rsquo;s F/A-18 Super Hornet fleet. It saved more than $2M, and the prototype won a new contract worth more than $10M. I also built an ML classifier for Navy air-traffic-control maintenance workflows.</p>
-        </div>
-      </section>
+  <section class="panel" id="work">
+    <div class="sec-head"><p class="eyebrow">Aerospace · Energy · Enterprise software · Government</p><h2>Work</h2></div>
+    <article class="job">
+      <div><h3>Aerospace</h3><p class="ti">Principal ML Engineer, Team Lead · current</p><span class="chip">predictive maintenance</span></div>
+      <p class="desc">I lead a cross-functional team of ML, MLOps and data engineers building predictive-maintenance systems for airline fleets. The work runs end to end, from data pipelines and deployment infrastructure to the alerts maintenance crews act on. Most of it is making models dependable enough to run a fleet on.</p>
+    </article>
+    <article class="job">
+      <div><h3>Pacific Gas &amp; Electric</h3><p class="ti">Senior Data Scientist</p><span class="chip">energy · wildfire risk</span></div>
+      <p class="desc">I built computer-vision models over drone imagery of California&rsquo;s electrical grid to flag deteriorating equipment and wildfire-ignition risk. Distributed pipelines turned raw drone video into per-asset risk scores that decided where inspection crews went first.</p>
+    </article>
+    <article class="job">
+      <div><h3>Microsoft</h3><p class="ti">Senior ML Engineer</p><span class="chip">sales intelligence</span></div>
+      <p class="desc">I built sales-intelligence and lead-ranking systems used by thousands of sellers. They combined geographic, firmographic, technographic and behavioral signals into production pipelines that ranked high-value prospects across the product portfolio.</p>
+    </article>
+    <article class="job">
+      <div><h3>Okta</h3><p class="ti">Senior ML Engineer</p><span class="chip">revenue forecasting</span></div>
+      <p class="desc">I built churn and ARR forecasting models across the revenue base and took them to production, improving performance by 13% to 97% predictive accuracy. I presented the results to sales leadership and the C-suite as decisions on at-risk accounts and retention.</p>
+    </article>
+    <article class="job">
+      <div><h3>Accenture</h3><p class="ti">ML Engineer, Technical Lead</p><span class="chip">federal services</span></div>
+      <p class="desc">I led MLOps for production models at a federal agency, with CI/CD pipelines serving millions of API calls a day. I refactored petabyte-scale ETL on Spark and Databricks and redesigned a model architecture that doubled performance while cutting AWS spend roughly in half.</p>
+    </article>
+    <article class="job">
+      <div><h3>Booz Allen Hamilton</h3><p class="ti">Data Scientist</p><span class="chip">defense aviation</span></div>
+      <p class="desc">I built the prototype deep-learning predictive-maintenance system for the U.S. Navy&rsquo;s F/A-18 Super Hornet fleet. It saved more than $2M, and the prototype won a new contract worth more than $10M. I also built an ML classifier for Navy air-traffic-control maintenance workflows.</p>
+    </article>
+    <div class="why">
+      <p><b>Why I wrote a math book.</b> I have onboarded a lot of ML engineers. The ones who struggled were not short on tooling; they were short on the math underneath it. The book is the one I kept wishing I could hand them.</p>
     </div>
-  </article>
+  </section>
 
-  <article class="sheet" id="skills">
-    <div class="rh"><span>Skills</span><span>Mikael Yemane</span></div>
-    <h2 class="chap">Skills</h2>
-    <div class="index">
-      <div><dl><dt>ML and data</dt><dd>PyTorch, TensorFlow, Keras, scikit-learn, MLflow, Spark, pandas, NumPy</dd></dl></div>
-      <div><dl><dt>Cloud and MLOps</dt><dd>Databricks, Unity Catalog, AWS, Azure, Terraform, GitLab CI/CD, Jenkins</dd></dl></div>
-      <div><dl><dt>Languages</dt><dd>Python, SQL, C/C++, Java, R, MATLAB, Bash</dd></dl></div>
-      <div><dl><dt>Mathematics</dt><dd>Optimization, applied probability and statistics, time series, stochastic processes, Monte Carlo and numerical methods</dd></dl></div>
-      <div><dl><dt>Speaking</dt><dd><a href="https://papers.phmsociety.org/index.php/phmap/issue/view/64">&ldquo;MLOps for PHM Systems&rdquo;</a>, paper and talk, PHM Society Asia-Pacific Conference, Tokyo, 2023</dd></dl></div>
-      <div><dl><dt>Education</dt><dd>B.S. Mathematics and B.A. Economics, minor in Computer Science, St. Mary&rsquo;s College of Maryland</dd></dl></div>
-      <div><dl><dt>Independent</dt><dd>Builds quantitative trading systems, from data ingestion and backtesting to execution and risk</dd></dl></div>
+  <section class="panel" id="skills">
+    <div class="sec-head"><h2>Skills</h2></div>
+    <div class="grid">
+      <div><h3>ML and data</h3><p>PyTorch, TensorFlow, Keras, scikit-learn, MLflow, Spark, pandas, NumPy</p></div>
+      <div><h3>Cloud and MLOps</h3><p>Databricks, Unity Catalog, AWS, Azure, Terraform, GitLab CI/CD, Jenkins</p></div>
+      <div><h3>Languages</h3><p>Python, SQL, C/C++, Java, R, MATLAB, Bash</p></div>
+      <div><h3>Mathematics</h3><p>Optimization, applied probability and statistics, time series, stochastic processes, Monte Carlo and numerical methods</p></div>
+      <div><h3>Speaking</h3><p><a href="https://papers.phmsociety.org/index.php/phmap/issue/view/64">&ldquo;MLOps for PHM Systems&rdquo;</a>, paper and talk, PHM Society Asia-Pacific Conference, Tokyo, 2023</p></div>
+      <div><h3>Education</h3><p>B.S. Mathematics and B.A. Economics, minor in Computer Science, St. Mary&rsquo;s College of Maryland</p></div>
+      <div><h3>Independent</h3><p>Builds quantitative trading systems, from data ingestion and backtesting to execution and risk</p></div>
     </div>
-  </article>
+  </section>
 
-  <article class="sheet" id="book">
-    <div class="rh"><span>The Book</span><span>Mikael Yemane</span></div>
+  <section class="panel" id="book">
     <div class="plate">
       <a href="index.html"><img src="assets/cover-front.jpg" alt="Cover of Math for ML Engineers: From Backprop to RLHF" width="700" height="900"></a>
       <div>
-        <h3>Math for ML Engineers</h3>
+        <p class="eyebrow">Author of</p>
+        <h2>Math for ML Engineers</h2>
         <p class="sub">From Backprop to RLHF</p>
         <p class="d">826 pages deriving the mathematics of modern AI, from linear algebra to the Transformer, diffusion, RLHF and mechanistic interpretability, with tested code for every algorithm.</p>
         <div class="actions">
@@ -304,21 +237,19 @@ p { margin: 0; hyphens: auto; }
         </div>
       </div>
     </div>
-  </article>
+  </section>
 
-  <article class="sheet" id="contact">
-    <div class="rh"><span>Correspondence</span><span>Mikael Yemane</span></div>
-    <h2 class="chap">Contact</h2>
-    <div class="prose"><p>Write to me about speaking, podcasts, collaborations, or the book. Instructors can request the PDF free from an institutional address.</p></div>
+  <section class="panel" id="contact">
+    <div class="sec-head"><h2>Contact</h2></div>
+    <p class="lede">Write to me about speaking, podcasts, collaborations, or the book. Instructors can request the PDF free from an institutional address.</p>
     <div class="contact">
       <span class="email" id="email">yemanemikaela@gmail.com</span>
       <button class="btn" type="button" data-copy="email">Copy address</button>
     </div>
-    <div class="colophon">
-      <p class="small">Code and errata: <a href="https://github.com/mikaelyemane">github.com/mikaelyemane</a>.</p>
-      <p class="small">&copy; Mikael Yemane. Salt Lake City.</p>
-    </div>
-  </article>
+    <ul class="links"><li><a href="https://github.com/mikaelyemane">GitHub</a></li></ul>
+  </section>
+
+  <footer><span>&copy; Mikael Yemane</span><a href="index.html">Math for ML Engineers</a></footer>
 </div>
 
 <script>
