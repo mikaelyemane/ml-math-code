@@ -13,7 +13,8 @@ The runnable companion to ***Math for ML Engineers: From Backprop to RLHF***. It
 
 📕 **The book:** 826 pages, 19 chapters in five parts, six appendices. [Book website](https://mikaelyemane.github.io/ml-math-code/).
 - **PDF**, full color, searchable, no DRM: $39, [buy direct](https://mikaelyemane.lemonsqueezy.com/checkout/buy/f05af828-35b7-42c7-8567-8ab40858c469).
-- **Paperback** (grayscale, 7×9 in) $59.99 and **Kindle** $39: coming soon on Amazon.
+- **Paperback** (grayscale, 7×9 in): $59.99 [on Amazon](https://www.amazon.com/dp/B0HLRCQ36C).
+- **Kindle** (fixed layout, for Fire tablets and Kindle for Android): $39 [on Amazon](https://www.amazon.com/dp/B0HLR8YNN6).
 
 🆓 **Free sample:** [Chapter 5, *Gradient Descent and the Optimization Landscape* (PDF)](docs/sample_chapter5.pdf), in full, no email required.
 🔓 **This repo is free and unpaywalled, always.**
@@ -70,7 +71,7 @@ Each one pairs with a *Challenge* box in the book.
 | | Challenge | Book | File |
 |---|---|---|---|
 | 🔍 | Find the bug | Ch 5, Adam | `code/challenges/ch05_find_the_bug.py` (+ `_solution.md`) |
-| 🏗️ | Build nanoGPT in 250 lines | Ch 11, Transformer | `code/reference/nano_gpt.py` |
+| 🏗️ | Build nanoGPT in about 250 lines of code (comments and docstrings aside) | Ch 11, Transformer | `code/reference/nano_gpt.py` |
 | 📜 | FlashAttention in pure NumPy | Ch 11, FlashAttention | `code/reference/flash_attention_numpy.py` |
 | 🏛️ | KV-cache memory three ways | Ch 11, KV cache | `code/reference/kv_cache_archaeology.py` |
 | 💸 | Plan a 1M-DAU LLM product on the back of an envelope | Ch 15, cost model | `code/challenges/ch15_plan_1m_dau.py` (+ `_solution.md`) |
