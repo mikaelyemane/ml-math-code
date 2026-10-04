@@ -1,6 +1,6 @@
 # Article notebooks
 
-One notebook per article in the *Math for ML Engineers* launch series. Each runs the article's code in order and reproduces every number it quotes, plus its figure. They need only NumPy and matplotlib.
+One notebook per article in the *Math for ML Engineers* launch series, plus article 16 on METR's agent time horizons. Each runs the article's code in order and reproduces every number it quotes, plus its figure. They need only NumPy and matplotlib; notebook 16 also downloads METR's public runs file (15 MB) on first run.
 
 | # | Article | Notebook |
 |---|---|---|
@@ -19,5 +19,6 @@ One notebook per article in the *Math for ML Engineers* launch series. Each runs
 | 13 | BatchNorm makes one example's output depend on its batchmates | [`13-batchnorm-vs-layernorm.ipynb`](13-batchnorm-vs-layernorm.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/13-batchnorm-vs-layernorm.ipynb) |
 | 14 | He init keeps the gradient norm and only 7% of the directions | [`14-residual-spectrum.ipynb`](14-residual-spectrum.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/14-residual-spectrum.ipynb) |
 | 15 | Why test error spikes 200× when features equal samples | [`15-double-descent-in-numpy.ipynb`](15-double-descent-in-numpy.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/15-double-descent-in-numpy.ipynb) |
+| 16 | METR's agent-horizon data can't tell a one-week ceiling from none | [`16-metr-time-horizon.ipynb`](16-metr-time-horizon.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/16-metr-time-horizon.ipynb) |
 
 These files are generated from the article sources by `make_notebooks.py` in the book repository. Edit the articles, then regenerate, rather than editing a notebook by hand.
