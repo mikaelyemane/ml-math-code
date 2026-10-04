@@ -89,7 +89,7 @@ p { margin: 0; }
 .sec-head h2 { font-size: clamp(1.6rem, 3.4vw, 2.1rem); line-height: 1.15; }
 
 /* hero */
-.hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: center; }
+.hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(26px, 4vw, 40px) clamp(28px, 5vw, 64px); align-items: start; }
 .hero h1 { font-size: clamp(2.5rem, 6vw, 3.9rem); line-height: 1.02; letter-spacing: -.005em; margin-top: 10px; }
 .hero .role { font-style: italic; font-size: clamp(1.2rem, 2.4vw, 1.45rem); color: var(--muted); margin-top: 10px; }
 .hero .intro { margin-top: 22px; display: flex; flex-direction: column; gap: 12px; max-width: 58ch; }
@@ -147,6 +147,18 @@ footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8p
   .plate { grid-template-columns: 96px minmax(0, 1fr); gap: 16px 18px; align-items: start; }
   .strip nav { gap: 6px 14px; font-size: .92rem; letter-spacing: .02em; }
 }
+
+
+/* author portrait: hairline circle like the book's rules; initials until assets/author.jpg exists */
+.avatar { position: relative; flex: none; box-sizing: border-box; width: var(--av); height: var(--av); margin: 0; padding: 4px; border: 0.8px solid var(--rule); border-radius: 50%; background: #fff; }
+.avatar > * { border-radius: 50%; }
+.avatar span { display: grid; place-items: center; width: 100%; height: 100%; background: #f1f1f4; color: var(--muted); font-family: var(--f-caps); font-size: calc(var(--av) * .26); letter-spacing: .08em; }
+.avatar img { position: absolute; inset: 4px; width: calc(100% - 8px); height: calc(100% - 8px); object-fit: cover; filter: grayscale(.15) contrast(1.02); }
+.who { --av: clamp(104px, 13vw, 148px); grid-column: 1 / -1; display: flex; align-items: center; gap: clamp(20px, 3.5vw, 36px); padding-bottom: clamp(22px, 3.5vw, 34px); border-bottom: 1px solid var(--hair); }
+.who h1 { margin-top: 6px; }
+.who .role { margin-top: 8px; }
+.hero > div:not(.who) .intro { margin-top: 0; }
+@media (max-width: 560px) { .who { flex-direction: column; align-items: flex-start; gap: 18px; } }
 </style>
 </head>
 <body>
@@ -158,10 +170,15 @@ footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8p
   </div>
 
   <header class="panel hero" id="top">
+    <div class="who">
+      <figure class="avatar"><span aria-hidden="true">MY</span><img src="assets/author.jpg" alt="Portrait of Mikael Yemane" width="240" height="240" decoding="async" onerror="this.remove()"></figure>
+      <div>
+        <p class="eyebrow">Machine learning engineering</p>
+        <h1>Mikael Yemane</h1>
+        <p class="role">Principal Machine Learning Engineer and team lead</p>
+      </div>
+    </div>
     <div>
-      <p class="eyebrow">Machine learning engineering</p>
-      <h1>Mikael Yemane</h1>
-      <p class="role">Principal Machine Learning Engineer and team lead</p>
       <div class="intro">
         <p>I build ML systems other people depend on: predictive maintenance for aircraft, wildfire risk on the electrical grid, revenue forecasting and sales intelligence for enterprise software.</p>
         <p>Today I lead an ML team in aerospace. I like owning a problem end to end, from the data pipeline to the model to the decision someone makes with it.</p>
