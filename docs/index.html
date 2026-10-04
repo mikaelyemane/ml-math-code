@@ -189,6 +189,18 @@ sub, sup { font-size: .7em; line-height: 0; }
   .rh span:last-child { display: none; }
   .strip nav { gap: 6px 14px; font-size: .92rem; letter-spacing: .02em; }
 }
+
+
+/* author portrait: hairline circle like the book's rules; initials until assets/author.jpg exists */
+.avatar { position: relative; flex: none; box-sizing: border-box; width: var(--av); height: var(--av); margin: 0; padding: 4px; border: 0.8px solid var(--rule); border-radius: 50%; background: #fff; }
+.avatar > * { border-radius: 50%; }
+.avatar span { display: grid; place-items: center; width: 100%; height: 100%; background: #f1f1f4; color: var(--muted); font-family: var(--f-caps); font-size: calc(var(--av) * .26); letter-spacing: .08em; }
+.avatar img { position: absolute; inset: 4px; width: calc(100% - 8px); height: calc(100% - 8px); object-fit: cover; filter: grayscale(.15) contrast(1.02); }
+.author-bio { --av: clamp(96px, 17vw, 128px); }
+.author-bio .avatar { float: left; shape-outside: circle(50%); shape-margin: 18px; margin: 4px 26px 10px 0; }
+.author-bio .prose p:first-child { text-indent: 0; }
+@media (max-width: 560px) { .author-bio .avatar { float: none; margin: 0 0 18px; } }
+.author-bio::after { content: ""; display: block; clear: both; }
 </style>
 </head>
 <body>
@@ -303,8 +315,11 @@ sub, sup { font-size: .7em; line-height: 0; }
   <article class="sheet" id="author">
     <div class="rh"><span>About the Author</span><span>Math for ML Engineers</span></div>
     <h2 class="chap">About the Author</h2>
+    <div class="author-bio">
+      <figure class="avatar"><span aria-hidden="true">MY</span><img src="assets/author.jpg" alt="Mikael Yemane" width="240" height="240" loading="lazy" decoding="async" onerror="this.remove()"></figure>
     <div class="prose">
       <p>Mikael Yemane is a Principal ML Engineer with seven years of production ML across defense, energy and Big Tech. He built the first deep-learning predictive-maintenance system for the U.S. Navy&rsquo;s F/A-18 Super Hornet, the Navy adopted it to determine mission capability across the fleet. At PG&amp;E, his computer-vision models scanned drone imagery of California&rsquo;s power grid for wildfire-ignition risk and decided where inspection crews went first. He now leads an ML team in aerospace, and wrote this book for the engineers he hires and trains.</p>
+    </div>
     </div>
     <div class="actions" style="justify-content:flex-start"><a class="btn" href="about.html">Full profile</a></div>
   </article>
