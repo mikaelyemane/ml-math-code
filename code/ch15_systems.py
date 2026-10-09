@@ -25,17 +25,6 @@ def roofline(ai, peak_flops, peak_bw):
 
 # ── Prefill and decode bounds for a Transformer ────────────────────────────────
 
-def prefill_tflops_per_token(N_params, P_tokens):
-    """
-    Prefill cost: ~2N FLOPs per token in the main linear layers,
-    plus attention's 2*P*d term per token. Returns TFLOPs/token total over all P.
-    Simplified: 6N + 2*P*d per token (gradient + activation + attention),
-    inference-only halves the gradient → 2N + 2*P*d per token.
-    """
-    # FLOPs per token in linear layers ≈ 2N (Chinchilla approximation)
-    return 2 * N_params
-
-
 def tpot_memory_bound(weight_bytes, peak_hbm_bw):
     """
     Decode TPOT (time per output token) when memory-bound:
@@ -86,7 +75,7 @@ def disaggregation_profitable(K_bytes, fabric_bw_GBs, prefill_time_s,
 
 def speculative_speedup(alpha, gamma, c=1.0):
     """
-    Leviathan-Kalai speedup formula:
+    Leviathan–Kalman–Matias speedup formula:
         E[tokens per call]   1 - alpha^(gamma+1)
         ──────────────────── = ─────────────────────
         E[wall time per call]  (1 - alpha)(c * gamma + 1)
@@ -148,7 +137,7 @@ def linear_quant_demo(d_in=256, d_out=128, n=200, rng=None):
 if __name__ == "__main__":
     np.random.seed(15)
 
-    # 1) Roofline: A100 spec
+    # 1) Roofline: A100-80GB SXM spec
     A100_TFLOPS_BF16 = 312e12   # 312 TFLOPS bf16
     A100_HBM_BW = 2.0e12        # 2 TB/s HBM bandwidth
     ridge_ai = A100_TFLOPS_BF16 / A100_HBM_BW
@@ -160,7 +149,7 @@ if __name__ == "__main__":
     prefill_flops = 2 * N * P
     # Weight bytes: 70B params × 2 bytes
     weight_bytes = N * 2
-    # Prefill reads every weight once total (not per token), plus 2*P*d^2 activations
+    # Prefill reads every weight once total (not per token), + P·d activations in/out (bf16)
     prefill_bytes = weight_bytes + 2 * P * 8192 * 2
     prefill_ai = arithmetic_intensity(prefill_flops, prefill_bytes)
     print(f"Prefill arithmetic intensity (P=2048, 70B): {prefill_ai:.0f} FLOPs/byte "
@@ -173,7 +162,7 @@ if __name__ == "__main__":
     print(f"Decode arithmetic intensity (70B): {decode_ai:.1f} FLOPs/byte "
           f"({'compute-bound' if decode_ai > ridge_ai else 'memory-bound'})")
     tpot_ms = tpot_memory_bound(weight_bytes, A100_HBM_BW) * 1000
-    print(f"Decode TPOT lower bound (memory-bound, 70B on A100): {tpot_ms:.1f} ms/token")
+    print(f"Decode TPOT lower bound (memory-bound, 70B bf16 on A100 if it fit; TP-2 in practice): {tpot_ms:.1f} ms/token")
     print(f"  → max single-stream decode rate: {1000 / tpot_ms:.1f} tok/s")
 
     # 4) KV-cache for Llama-3-70B at 128K context
@@ -192,11 +181,11 @@ if __name__ == "__main__":
           f"{kv_2k / 1e6:.1f} MB per request")
 
     # 6) Disaggregation profitability
-    # 200 ms prefill (single A100 estimate), 50 GB/s InfiniBand fabric
+    # 400 ms prefill (4×A100 TP-4, 60% MFU; ch15 §Disaggregation), 50 GB/s InfiniBand fabric
     profit, transfer_s, prefill_s = disaggregation_profitable(
-        K_bytes=kv_2k, fabric_bw_GBs=50, prefill_time_s=0.2, margin=10
+        K_bytes=kv_2k, fabric_bw_GBs=50, prefill_time_s=0.4, margin=10
     )
-    print(f"\nDisaggregation (P=2K, 50 GB/s fabric, 200 ms prefill):")
+    print(f"\nDisaggregation (P=2K, 50 GB/s fabric, 400 ms prefill):")
     print(f"  KV-transfer time: {transfer_s * 1000:.1f} ms")
     print(f"  Prefill time:     {prefill_s * 1000:.1f} ms")
     print(f"  Profitable?       {profit} (margin >= 10x)")
@@ -215,4 +204,4 @@ if __name__ == "__main__":
     print(f"  INT8 weights:  MSE = {mse_int8:.6f}  (SNR = {signal_var/mse_int8:>7.0f}x)")
     print(f"  INT4 weights:  MSE = {mse_int4:.6f}  (SNR = {signal_var/mse_int4:>7.0f}x)")
     print(f"  Storage:  fp32 = 4 B/param, INT8 = 1 B, INT4 = 0.5 B")
-    print(f"  Cost-per-MB ratio fp32:INT8:INT4 = 8 : 2 : 1")
+    print(f"  Bytes/param ratio fp32:INT8:INT4 = 8 : 2 : 1")

@@ -15,6 +15,8 @@ chapter derivations:
      (T = 200) is run alongside to show the terminal-SNR bias the chapter
      warns about: alpha_bar_T is far from 0, so starting from N(0, I) is
      the wrong prior and the samples come out biased toward the origin.
+     The chapter's own shortened schedule (beta_t = 0.02 t / T, T = 100)
+     is run too, so its alpha_bar_T = 0.362 and sqrt = 0.601 can be checked.
 """
 import numpy as np
 
@@ -254,3 +256,13 @@ if __name__ == "__main__":
               f"std={samples.std(axis=0).round(3)}  |mean error|={err:.3f}")
     print("  T=1000 recovers the target; T=200 leaves alpha_bar_T ~ 0.13, so the N(0, I)")
     print("  starting point is the wrong prior and the sample mean is pulled toward 0.")
+
+    # ---- The chapter's shortened schedule: beta_t = 0.02 t / T, T = 100 ----
+    T_book = 100
+    b, a_, ab = ddpm_schedule(T_book, beta_min=0.02 / T_book, beta_max=0.02)
+    samples = ddpm_reverse_sample(target_mean, b, a_, ab, n_gen, rng)
+    err = np.linalg.norm(samples.mean(axis=0) - target_mean)
+    print(f"\nChapter schedule beta_t = 0.02 t/T, T={T_book}:")
+    print(f"  alpha_bar_T = {ab[-1]:.3f}  sqrt(alpha_bar_T) = {np.sqrt(ab[-1]):.3f}  "
+          f"sqrt(1 - alpha_bar_T) = {np.sqrt(1 - ab[-1]):.3f}")
+    print(f"  oracle sampler mean = {samples.mean(axis=0).round(3)}  |mean error| = {err:.3f}")

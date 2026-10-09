@@ -229,7 +229,7 @@ def main() -> None:
 
     # Residual risk: prefill is compute, and the decode figures above ignore it.
     prefill_flops = 2 * LLAMA3_70B_INT4.params * p["prompt_tokens"]
-    mfu = 0.5
+    mfu = 0.6
     prefill_sec = prefill_flops / (mfu * gpu.peak_flops)
     peak_msgs = msgs_per_day / 86_400 * p["peak_to_average"]
     print("\n  Residual risk: prefill")

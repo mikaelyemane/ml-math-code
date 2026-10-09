@@ -1,9 +1,10 @@
 """Ch. 13 — Policy Gradient.
 
-REINFORCE on a 3-state chain MDP with a running-mean baseline.
-Demonstrates the variance-reduction effect of the baseline (the chapter's
-key empirical claim) and the PPO clipped surrogate as a one-step contrast
-against vanilla policy gradient.
+Reproduces the seeded baseline example of Section 13.4 (the two-armed
+bandit at state "med": Var 581.3 / 92.5, a 6.3x reduction), then runs
+REINFORCE on a 3-state chain MDP with a running-mean baseline, and shows
+the PPO clipped surrogate as a one-step contrast against vanilla policy
+gradient.
 """
 import numpy as np
 
@@ -95,6 +96,22 @@ def reach_prob(theta, rng, n_eval=500):
     return successes / n_eval
 
 
+def baseline_variance_example(n=1000, seed=0):
+    """Section 13.4 example, call for call: single-sample REINFORCE at theta=0
+    on the two-armed bandit with Q(med, study)=46.84, Q(med, rest)=43.10 and
+    reward noise sd 19.15. Returns (r_bar, Var[g] at b=0, Var[g] at b=r_bar)."""
+    rng = np.random.default_rng(seed)
+    action_is_study = rng.random(n) < 0.5
+    rewards = np.where(action_is_study,
+                       rng.normal(46.84, 19.15, n),
+                       rng.normal(43.10, 19.15, n))
+    score = np.where(action_is_study, 0.5, -0.5)   # grad log pi at theta=0
+    r_bar = rewards.mean()
+    g_no_baseline = score * rewards
+    g_baseline = score * (rewards - r_bar)
+    return r_bar, g_no_baseline.var(), g_baseline.var()
+
+
 def ppo_clip_loss(ratio, advantage, eps=0.2):
     """Clipped surrogate objective from Schulman et al. 2017 (Eq. 7)."""
     clipped = np.clip(ratio, 1 - eps, 1 + eps)
@@ -116,8 +133,9 @@ def vanilla_pg_loss(ratio, advantage):
 #   L_DPO(theta) = -E [ log sigmoid( beta * log pi_theta(y_w|x)/pi_ref(y_w|x)
 #                                  - beta * log pi_theta(y_l|x)/pi_ref(y_l|x) ) ]
 #
-# Empirically: as training progresses, log-ratio margin grows and the loss
-# saturates (DPO's known pathology, derived in Ch.13 §DPO).
+# Empirically: as training progresses, the log-ratio margin keeps growing.
+# On a pair labelled only one way (empirical p = 1) the logistic loss has no
+# finite optimum, so beta does not cap the margin (DPO's overfitting pathology, Ch.13 §DPO).
 
 
 def sigmoid(z):
@@ -172,7 +190,14 @@ if __name__ == "__main__":
     running_baseline = 0.0
     bl_alpha = 0.1  # EMA factor for the baseline
 
-    # ---- variance comparison on a single batch at init ----
+    # ---- Section 13.4 seeded baseline example ----
+    r_bar, v0, v1 = baseline_variance_example()
+    print("Section 13.4 bandit example (default_rng(0), 1000 rollouts):")
+    print(f"  r_bar = {r_bar:.2f}  Var[g] b=0 = {v0:.1f}  "
+          f"Var[g] b=r_bar = {v1:.1f}  ratio = {v0 / v1:.1f}x")
+    print()
+
+    # ---- variance comparison on the chain MDP, single batch at init ----
     trajs, Gs = collect_returns(theta, rng, batch_size=64)
     flat_G = np.array([G for traj_G in Gs for G in traj_G])
     var_no_baseline = grad_variance(theta, trajs, Gs, baseline=0.0)
@@ -226,5 +251,5 @@ if __name__ == "__main__":
     final_p = np.exp(z) / np.exp(z).sum()
     print(f"  final policy for prompt 0: {final_p.round(3)}  "
           f"(was {np.array([1/3]*3).round(3)} at init)")
-    print(f"  margin grows then saturates as 1 - sigmoid(margin) -> 0  "
-          f"(DPO saturation, Ch.13 §DPO).")
+    print(f"  margin keeps growing: no finite optimum on single-label "
+          f"pairs, so beta does not anchor the policy (Ch.13 §DPO).")

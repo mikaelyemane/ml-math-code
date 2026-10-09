@@ -127,8 +127,6 @@ if __name__ == "__main__":
             Wm = Wh.copy(); Wm[i, j] -= eps
             dWh_num[i, j] = (total_loss(Wp.ravel()) - total_loss(Wm.ravel())) / (2*eps)
 
-    # .round(8) used to floor this to a bare "0.0", which reads like a vacuous
-    # check rather than a good one. Print the real magnitude.
     _bptt_err = np.max(np.abs(dWh - dWh_num))
     print(f"BPTT Wh gradient check max err: {_bptt_err:.2e}  (< 1e-5: {_bptt_err < 1e-5})")
 

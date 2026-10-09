@@ -1,8 +1,9 @@
 """KV-cache memory, three independent ways --- Chapter 11.
 
 The chapter states that Llama-3-70B costs ~328 KB per token of KV cache, and
-~43 GB for a single 128K-context request. Those are load-bearing numbers in any
-LLM-serving interview and in any capacity plan, so do not take them on faith.
+~43 GB for a single 128K-context request (Llama-3.1-70B, same KV shape). Those
+are load-bearing numbers in any LLM-serving interview and in any capacity plan,
+so do not take them on faith.
 
 This script computes both three separate ways that share no arithmetic:
 
@@ -18,9 +19,10 @@ All three must agree to the byte. If they ever disagree, the formula is wrong.
 Things to try:
 
   * Set n_kv_heads = n_heads (plain MHA instead of GQA). The cache multiplies
-    by H/G = 8x. This is why every modern open-weight model uses GQA.
-  * Set dtype_bytes = 1 (fp8 instead of bf16). The cache halves, and so does
-    the dollars-per-request at serving time.
+    by H/G = 8x. This is why most modern open-weight models use GQA
+    (DeepSeek uses MLA).
+  * Set dtype_bytes = 1 (fp8 instead of bf16). The cache halves, which lowers
+    dollars-per-request once the cache is the binding constraint.
 
 Units: byte counts are reported in decimal (1 GB = 1e9 bytes) to match the
 chapter, with binary units alongside, because GPU specs and profiler output are

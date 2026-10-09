@@ -152,7 +152,12 @@ def precompute_rope(head_dim, max_len, base=10000.0, device="cpu"):
 
 
 def apply_rope(x, cos, sin, offset=0):
-    """x: (B, H, T, Dh). Rotates each adjacent pair of channels by m*theta."""
+    """x: (B, H, T, Dh). Rotates channel pairs (i, i + Dh/2) by m*theta_i.
+
+    This is the half-split layout used by GPT-NeoX and HF Llama; it equals the
+    interleaved (2i, 2i+1) form in the chapter up to a fixed
+    permutation of the channels.
+    """
     T, half = x.shape[2], x.shape[3] // 2
     c = cos[offset:offset + T].view(1, 1, T, half)
     s = sin[offset:offset + T].view(1, 1, T, half)
@@ -289,14 +294,18 @@ class GPT(nn.Module):
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None):
-        """Incremental decode using the KV cache --- Section 11.10.1."""
+        """Incremental decode using the KV cache --- Section 11.10.1.
+
+        Once the context reaches block_size, each step re-prefills the last
+        block_size tokens (sliding window, no cache).
+        """
         self.eval()
         caches = None
         cur = idx
         for _ in range(max_new_tokens):
-            if idx.shape[1] > self.cfg.block_size:     # cache is bounded
-                caches, cur, idx = None, cur[:, -self.cfg.block_size:], \
-                    idx[:, -self.cfg.block_size:]
+            ctx = 0 if caches is None else caches[0][0].shape[2]
+            if ctx + cur.shape[1] > self.cfg.block_size:   # cache is bounded:
+                caches, cur = None, idx[:, -self.cfg.block_size:]  # re-prefill
             logits, _, caches = self(cur, caches=caches)
             logits = logits[:, -1, :] / max(temperature, 1e-8)
             if top_k is not None:

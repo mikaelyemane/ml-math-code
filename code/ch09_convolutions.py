@@ -1,9 +1,11 @@
 """
 Ch09 — Convolutions
-Covers: 1-D conv as matrix multiply (doubly block-Toeplitz view),
+Covers: 1-D conv as matrix multiply (Toeplitz view),
         2-D conv forward/backward from scratch, gradient check.
+Here conv = cross-correlation, as in the book.
 Forward: y = conv(x, w)
-Backward: dx = full_conv(dy, flip(w)),  dw = valid_conv(x, dy)
+Backward: dx = full_conv(dy, flip(w)) (a true convolution with w),
+          dw = valid_conv(x, dy)
 """
 import numpy as np
 
@@ -54,7 +56,7 @@ def conv2d_backward(x, w, dy):
     dw = valid_conv(x, dy)
     """
     kH, kW = w.shape
-    # dx: pad dy and convolve with flipped kernel
+    # dx: pad dy and cross-correlate with flipped kernel
     pH, pW = kH - 1, kW - 1
     dy_pad = np.pad(dy, ((pH, pH), (pW, pW)))
     w_flip = w[::-1, ::-1]
@@ -114,6 +116,15 @@ if __name__ == "__main__":
             dw_num[i, j] = (loss2d(x2, wp) - loss2d(x2, wm)) / (2 * h)
 
     print(f"\n2-D kernel gradient check max err: {np.max(np.abs(dw_an - dw_num)):.2e}")
+
+    dx_num = np.zeros_like(x2)
+    for i in range(H):
+        for j in range(W):
+            xp = x2.copy(); xp[i, j] += h
+            xm = x2.copy(); xm[i, j] -= h
+            dx_num[i, j] = (loss2d(xp, w2) - loss2d(xm, w2)) / (2 * h)
+
+    print(f"2-D input gradient check max err:  {np.max(np.abs(dx_an - dx_num)):.2e}")
 
     # Receptive field growth
     for L in [1, 3, 5, 10]:

@@ -9,7 +9,7 @@ It does not. The loss starts at 24.2, and the very first update sends it to
 steps, then grinds back down and eventually reaches the floor anyway, which is
 what makes this bug so good at surviving code review.
 
-Exactly one operator in `adam_step` is wrong. The bug is in the bias-correction
+Exactly one character in `adam_step` is wrong. The bug is in the bias-correction
 algebra derived in Section 5.5.3 --- not in the data, the learning rate, or the
 loss. The fix is a single character.
 

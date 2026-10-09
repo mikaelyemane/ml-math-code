@@ -16,7 +16,7 @@ def normal_equations(X, y):
 def ridge(X, y, lam):
     """
     Ridge / L2 regression: w* = (X^T X + λI)^{-1} X^T y.
-    Equivalent to MAP under Gaussian prior w ~ N(0, (1/λ)I).
+    Equivalent to MAP under Gaussian prior w ~ N(0, (σ²/λ) I) with noise variance σ².
     """
     n, d = X.shape
     return np.linalg.solve(X.T @ X + lam * np.eye(d), X.T @ y)
@@ -48,10 +48,9 @@ def lasso_ista(X, y, lam, n_iters=500):
 # ── Logistic regression ───────────────────────────────────────────────────────
 
 def sigmoid(z):
-    """Numerically stable sigmoid: clips large inputs."""
-    return np.where(z >= 0,
-                    1 / (1 + np.exp(-z)),
-                    np.exp(z) / (1 + np.exp(z)))
+    """Numerically stable sigmoid (branch on sign)."""
+    e = np.exp(-np.abs(z))
+    return np.where(z >= 0, 1 / (1 + e), e / (1 + e))
 
 
 def logistic_loss(w, X, y):

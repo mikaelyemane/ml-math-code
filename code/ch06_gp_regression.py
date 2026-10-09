@@ -41,5 +41,5 @@ if __name__ == "__main__":
     rmse = np.sqrt(np.mean((mu_star - y_true) ** 2))
     coverage = np.mean(np.abs(y_true - mu_star) <= 2 * sigma_star)
 
-    print(f"Training RMSE (posterior mean vs true sin):  {rmse:.4f}")
+    print(f"Test-grid RMSE (posterior mean vs true sin): {rmse:.4f}")
     print(f"95% coverage (fraction within ±2σ):         {coverage:.4f}")

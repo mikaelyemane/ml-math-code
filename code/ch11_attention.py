@@ -1,7 +1,8 @@
 """
 Ch11 — Scaled Dot-Product Attention & Transformers
-Covers: SDPA forward (with causal mask), softmax Jacobian,
-        multi-head attention, KV-cache single-step decode.
+Covers: SDPA forward (with causal mask), softmax Jacobian, SDPA backward
+        with a finite-difference check, multi-head attention,
+        KV-cache single-step decode.
 """
 import numpy as np
 
@@ -30,7 +31,7 @@ def sdpa(Q, K, V, mask=None):
 
 
 def causal_mask(n):
-    """Lower-triangular mask: M[i,j] = 0 if j≤i, else -∞."""
+    """Causal mask: -∞ strictly above the diagonal; M[i,j] = 0 if j≤i, else -∞."""
     M = np.zeros((n, n))
     M[np.triu_indices(n, k=1)] = -np.inf
     return M
@@ -44,6 +45,22 @@ def softmax_jacobian(a):
     a: (K,) softmax output.  Returns (K, K) Jacobian.
     """
     return np.diag(a) - np.outer(a, a)
+
+
+# ── SDPA backward ─────────────────────────────────────────────────────────────
+
+def sdpa_backward(Q, K, V, dO, mask=None):
+    """
+    Gradients of a loss through O = softmax(QK^T/√d_k + M) V, given dO = dL/dO.
+    dV = A^T dO;  dA = dO V^T;  dS = A ⊙ (dA - rowsum(A ⊙ dA));
+    dQ = dS K / √d_k;  dK = dS^T Q / √d_k.
+    """
+    d_k = Q.shape[-1]
+    _, A = sdpa(Q, K, V, mask)
+    dV = A.T @ dO
+    dA = dO @ V.T
+    dS = A * (dA - (A * dA).sum(axis=-1, keepdims=True))
+    return dS @ K / np.sqrt(d_k), dS.T @ Q / np.sqrt(d_k), dV
 
 
 # ── Multi-head attention ──────────────────────────────────────────────────────
@@ -117,6 +134,21 @@ if __name__ == "__main__":
         sm = s.copy(); sm[j] -= h
         J_numerical[:, j] = (softmax(sp) - softmax(sm)) / (2 * h)
     print(f"\nSoftmax Jacobian max err: {np.max(np.abs(J_analytical - J_numerical)):.2e}")
+
+    # SDPA backward vs. finite differences, loss L = ||O||_F^2 (dL/dO = 2 O)
+    mask = causal_mask(n)
+    loss = lambda Q_, K_, V_: np.sum(sdpa(Q_, K_, V_, mask)[0] ** 2)
+    O, _ = sdpa(Q, K, V, mask)
+    grads = sdpa_backward(Q, K, V, 2 * O, mask)
+    for name, X_, g in zip("QKV", (Q, K, V), grads):
+        g_num = np.zeros_like(X_)
+        for idx in np.ndindex(X_.shape):
+            Xp = X_.copy(); Xp[idx] += h
+            Xm = X_.copy(); Xm[idx] -= h
+            args_p = [Q, K, V]; args_m = [Q, K, V]
+            args_p["QKV".index(name)] = Xp; args_m["QKV".index(name)] = Xm
+            g_num[idx] = (loss(*args_p) - loss(*args_m)) / (2 * h)
+        print(f"d{name} max err vs finite difference: {np.max(np.abs(g - g_num)):.2e}")
 
     # MHA
     d_model, n_heads2 = 16, 4

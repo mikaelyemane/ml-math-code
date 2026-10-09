@@ -2,14 +2,15 @@ r"""Ch. 5 — Optimization.
 
 First-order optimisers on an ill-conditioned quadratic. The example is
 deliberately stretched (10x curvature in y vs. x) so that the difference
-between vanilla SGD, momentum, and Adam shows up cleanly in 500 steps.
+between plain gradient descent, momentum, and Adam shows up in the loss
+at steps 10, 50 and 100; all three have converged by step 500.
 A Newton step is added for contrast: with the true Hessian, one step
 converges exactly.
 """
 import numpy as np
 
 
-def sgd(grad_fn, theta0, lr, n_steps):
+def gd(grad_fn, theta0, lr, n_steps):
     """Plain gradient descent: theta_{t+1} = theta_t - lr * grad(theta_t)."""
     theta = theta0.copy()
     history = [theta.copy()]
@@ -80,13 +81,19 @@ if __name__ == "__main__":
 
     theta0 = np.array([0.0, 0.0])
 
-    res_sgd, _ = sgd(grad_f, theta0, lr=0.05, n_steps=500)
-    res_mom, _ = momentum(grad_f, theta0, lr=0.05, beta=0.9, n_steps=500)
-    res_adam, _ = adam(grad_f, theta0, lr=0.1, beta1=0.9, beta2=0.999, eps=1e-8, n_steps=500)
+    res_gd, hist_gd = gd(grad_f, theta0, lr=0.05, n_steps=500)
+    res_mom, hist_mom = momentum(grad_f, theta0, lr=0.05, beta=0.9, n_steps=500)
+    res_adam, hist_adam = adam(grad_f, theta0, lr=0.1, beta1=0.9, beta2=0.999, eps=1e-8, n_steps=500)
     res_newt = newton_step(grad_f, hess_f, theta0)
 
+    checkpoints = (10, 50, 100)
+    print("loss at step   " + "  ".join(f"{k:>9d}" for k in checkpoints))
+    for name, hist in [("GD      ", hist_gd), ("Momentum", hist_mom), ("Adam    ", hist_adam)]:
+        print(f"{name}      " + "  ".join(f"{f(hist[k]):9.2e}" for k in checkpoints))
+    print()
+
     rows = [
-        ("SGD     ", res_sgd),
+        ("GD      ", res_gd),
         ("Momentum", res_mom),
         ("Adam    ", res_adam),
         ("Newton  ", res_newt),

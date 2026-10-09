@@ -9,7 +9,7 @@ import numpy as np
 # ── SVD ──────────────────────────────────────────────────────────────────────
 
 def economy_svd(A):
-    """Return U, s, Vt with only r = rank(A) columns in U and rows in Vt."""
+    """Return U, s, Vt with min(m, n) columns/rows (economy SVD)."""
     U, s, Vt = np.linalg.svd(A, full_matrices=False)
     return U, s, Vt
 
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     print("Singular values:", np.round(s, 4))
     print("Condition number:", round(condition_number(A), 4))
 
-    # ── Rank-1 vs rank-2 approximation ──
+    # ── Rank-k approximations, k = 1..3 ──
     A5x5 = rng.normal(size=(5, 5))
     for k in [1, 2, 3]:
         Ak = low_rank_approx(A5x5, k)

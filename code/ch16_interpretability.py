@@ -10,11 +10,11 @@ book and the code is visible rather than hidden.
   3. One-sided vs two-sided threshold   Eq. (16.6) vs Eq. (4.16)
   4. Sparse autoencoder + dead latents  Eq. (16.5), Gao et al. (2024) fixes
   5. Induction circuit (K-composition)  Section 16.3.1, Olsson et al. (2022)
-  6. Activation patching                Definitions 16.2 and 16.3
+  6. Activation patching                denoising and noising definitions
   7. Difference-of-means steering       Eq. (16.12), Cauchy-Schwarz
   8. Chain-of-thought faithfulness      Section 16.4, the ablation protocol
 
-Run it:  python3 ch16_interpretability.py     (about 15 s, NumPy only)
+Run it:  python3 ch16_interpretability.py     (about 0.5-2 min, NumPy only)
 """
 
 import numpy as np
@@ -208,22 +208,54 @@ def threshold_demo(lam=0.5):
 # 4. Sparse autoencoder, and what kills its latents  (Eq. 16.5)
 # ---------------------------------------------------------------------------
 
-def train_sae(rng, X, m, lam=0.4, steps=4000, lr=5e-3, mitigate=True):
-    """Fit Eq. (16.5) by gradient descent with a ReLU encoder.
+AUX_ALPHA, K_AUX = 1.0 / 32, 32
+MIN_FIRES = 5          # live = fires on at least 5 of the 4000 inputs (~0.1%)
 
-    mitigate=True applies the two standard fixes from Gao et al. (2024):
-      * tied initialisation (encoder = decoder transpose), and
-      * an auxiliary loss that reconstructs the residual from dead latents
-        only, so an inactive latent still receives a gradient.
+
+def auxk_grads(x, pre, recon, W_dec, dead, k_aux=K_AUX, relu_gate=False):
+    """Gradients of the AuxK term  L_aux = mean ||e - e_hat||^2  (Gao et al. 2024).
+
+    e = x - recon is the main reconstruction's residual, held fixed. e_hat is
+    rebuilt from the top-k_aux PRE-activations among the dead latents, with no
+    ReLU gate: a dead latent's pre-activation is negative on every input, so a
+    ReLU here would zero it and hand back exactly the zero gradient the main
+    loss already gives (relu_gate=True shows it). Returns the gradients
+    (dW_dec[dead], dW_enc[:, dead], db_enc[dead]).
+    """
+    B = x.shape[0]
+    p = pre[:, dead]
+    k = min(k_aux, p.shape[1])
+    top = np.argpartition(-p, k - 1, axis=1)[:, :k]
+    mask = np.zeros_like(p)
+    np.put_along_axis(mask, top, 1.0, axis=1)
+    if relu_gate:
+        mask *= p > 0
+    z = p * mask                                   # top-k_aux pre-activations
+    g_e = 2.0 * (z @ W_dec[dead] - (x - recon)) / B
+    g_z = (g_e @ W_dec[dead].T) * mask
+    return z.T @ g_e, x.T @ g_z, g_z.sum(axis=0)
+
+
+def train_sae(rng, X, m, lam=1.0, steps=4000, lr=2e-2, tied=True, aux=True,
+              dead_after=100):
+    """Fit Eq. (16.5) by gradient descent with a ReLU encoder, renormalising
+    each decoder row to unit norm after every step (the constraint in 16.5).
+
+    The two standard fixes from Gao et al. (2024) can be switched separately:
+      * tied=True: initialise the encoder as the decoder transpose, and
+      * aux=True:  add AUX_ALPHA * L_aux (see auxk_grads), so a latent that
+        has stopped firing still receives a gradient.
+    A latent counts as dead after `dead_after` consecutive batches without
+    firing (the toy-scale stand-in for Gao et al.'s 10M-token window).
     """
     d = X.shape[1]
     W_dec = rng.normal(scale=1.0 / np.sqrt(d), size=(m, d))
-    # Tied init is one of the two mitigations; the unmitigated run draws the
-    # encoder independently, which is what lets latents start out never firing.
-    W_enc = W_dec.T.copy() if mitigate else rng.normal(scale=0.3 / np.sqrt(d), size=(d, m))
-    b_enc = np.zeros(m) if mitigate else np.full(m, -0.05)
-    fired = np.zeros(m, dtype=bool)
-    ema_fired = np.zeros(m)
+    W_dec /= np.linalg.norm(W_dec, axis=1, keepdims=True)
+    # Untied init draws the encoder independently, which is what lets
+    # latents start out never firing.
+    W_enc = W_dec.T.copy() if tied else rng.normal(scale=0.3 / np.sqrt(d), size=(d, m))
+    b_enc = np.zeros(m)
+    since_fired = np.zeros(m, dtype=int)
 
     for t in range(1, steps + 1):
         idx = rng.integers(0, X.shape[0], 256)
@@ -238,30 +270,25 @@ def train_sae(rng, X, m, lam=0.4, steps=4000, lr=5e-3, mitigate=True):
         dW_enc = x.T @ g_h / x.shape[0]
         db_enc = g_h.mean(axis=0)
 
-        ema_fired = 0.99 * ema_fired + 0.01 * (h > 0).any(axis=0)
-        fired |= (h > 0).any(axis=0)
-
-        if mitigate:
-            dead = ema_fired < 1e-3
-            if dead.any():
-                # Auxiliary term: reconstruct the residual using ONLY dead
-                # latents, which is the only gradient they can still receive.
-                aux_h = np.maximum(pre[:, dead], 0.0)
-                aux_resid = aux_h @ W_dec[dead] - (x - recon)
-                dW_dec[dead] += 0.5 * aux_h.T @ (2.0 * aux_resid) / x.shape[0]
-                g_aux = 2.0 * aux_resid @ W_dec[dead].T * (pre[:, dead] > 0)
-                dW_enc[:, dead] += 0.5 * x.T @ g_aux / x.shape[0]
+        since_fired = np.where((h > 0).any(axis=0), 0, since_fired + 1)
+        dead = np.flatnonzero(since_fired >= dead_after)
+        if aux and dead.size:
+            gd, ge, gb = auxk_grads(x, pre, recon, W_dec, dead)
+            dW_dec[dead] += AUX_ALPHA * gd
+            dW_enc[:, dead] += AUX_ALPHA * ge
+            db_enc[dead] += AUX_ALPHA * gb
 
         W_dec -= lr * dW_dec
+        W_dec /= np.linalg.norm(W_dec, axis=1, keepdims=True)
         W_enc -= lr * dW_enc
         b_enc -= lr * db_enc
 
     pre = X @ W_enc + b_enc
     h = np.maximum(pre, 0.0)
-    alive = (h > 0).sum(axis=0) > 0
+    fires = (h > 0).sum(axis=0)
     mse = float(np.mean((h @ W_dec - X) ** 2))
     l0 = float((h > 0).sum(axis=1).mean())
-    return alive, mse, l0
+    return fires, mse, l0
 
 
 def sae_demo(d=16, m=256, n=4000, k_true=3):
@@ -276,14 +303,22 @@ def sae_demo(d=16, m=256, n=4000, k_true=3):
 
     print(f"{n} activations in R^{d}, generated from {m} sparse atoms "
           f"({k_true} active per sample)\n")
-    print(f"{'training':>22}  {'live latents':>12}  {'dead':>8}  {'recon MSE':>10}  {'mean L0':>8}")
-    print("-" * 70)
-    for label, mit in (("unmitigated", False), ("tied init + aux loss", True)):
-        alive, mse, l0 = train_sae(np.random.default_rng(SEED), X, m, mitigate=mit)
+    print(f"live = fires on >= {MIN_FIRES} of {n} inputs; 'rare' = fires on 1-{MIN_FIRES - 1}\n")
+    print(f"{'training':>22}  {'live latents':>12}  {'dead':>8}  {'rare':>5}  {'recon MSE':>10}  {'mean L0':>8}")
+    print("-" * 77)
+    arms = (("unmitigated", False, False), ("AuxK only", False, True),
+            ("tied init only", True, False), ("tied init + AuxK", True, True))
+    for label, tied, aux in arms:
+        fires, mse, l0 = train_sae(np.random.default_rng(SEED), X, m, tied=tied, aux=aux)
+        alive = fires >= MIN_FIRES
+        rare = int(((fires > 0) & ~alive).sum())
         dead_pct = 100.0 * (1 - alive.mean())
-        print(f"{label:>22}  {int(alive.sum()):12d}  {dead_pct:7.1f}%  {mse:10.5f}  {l0:8.2f}")
-    print("\n  At equal reconstruction the mitigated run is markedly sparser")
-    print("  (mean L0 halves), which is the whole point of the penalty.")
+        print(f"{label:>22}  {int(alive.sum()):12d}  {dead_pct:7.1f}%  {rare:5d}  {mse:10.5f}  {l0:8.2f}")
+    print("\n  Same data, seed and encoder bias in every arm; only the two fixes vary.")
+    print("  On this L1/ReLU toy, AuxK at most moves dead latents to the edge of")
+    print("  firing (the 'rare' column) and leaves the live count and recon MSE")
+    print("  where they were; tied init is what keeps latents alive here. AuxK was")
+    print("  designed for Gao et al.'s TopK SAEs.")
     print("\n  Honest scope: the 90%-dead figure Gao et al. report is a")
     print("  production-scale phenomenon; a 4000-sample toy does not reproduce")
     print("  that rate. The MECHANISM behind it is checkable right here.\n")
@@ -296,9 +331,11 @@ def dead_latent_mechanism(d=8, m=4, n=256):
     A ReLU latent whose pre-activation is negative on every input contributes
     nothing to the reconstruction and receives exactly zero gradient from the
     main objective --- the ReLU derivative is 0 everywhere it lives. No amount
-    of further training revives it. The auxiliary term reconstructs the
-    residual from dead latents alone, which is a gradient path that does not
-    route through the main objective's ReLU gate.
+    of further training revives it. AuxK reconstructs the residual from dead
+    latents' pre-activations with no ReLU gate, which is a gradient path that
+    does not route through that zero. It unfreezes the latent; it does not by
+    itself push the pre-activation above zero. The same auxk_grads that train_sae uses
+    is called here; gating it with a ReLU puts the zero right back.
     """
     rng = np.random.default_rng(SEED)
     X = rng.normal(size=(n, d))
@@ -309,20 +346,26 @@ def dead_latent_mechanism(d=8, m=4, n=256):
 
     pre = X @ W_enc + b_enc
     h = np.maximum(pre, 0.0)
-    resid = h @ W_dec - X
+    recon = h @ W_dec
+    resid = recon - X
     g_h = (2.0 * resid @ W_dec.T + 0.4) * (pre > 0)
     g_main = np.abs(X.T @ g_h / n).sum(axis=0)
 
-    aux_resid = np.maximum(pre[:, [3]], 0.0) @ W_dec[[3]] - (X - (h @ W_dec))
-    g_aux = float(np.abs(X.T @ (2.0 * aux_resid @ W_dec[[3]].T)).sum())
+    dead = np.array([3])
+    _, ge, gb = auxk_grads(X, pre, recon, W_dec, dead)
+    g_aux = AUX_ALPHA * float(np.abs(ge).sum() + np.abs(gb).sum())
+    _, ge0, gb0 = auxk_grads(X, pre, recon, W_dec, dead, relu_gate=True)
+    g_gated = AUX_ALPHA * float(np.abs(ge0).sum() + np.abs(gb0).sum())
 
     print(f"  {'latent':>7}  {'fires on':>10}  {'|grad| from main loss':>22}")
     for j in range(m):
         print(f"  {j:>7}  {int((h[:, j] > 0).sum()):>6}/{n}  {g_main[j]:>22.6e}")
     print(f"\n  latent 3 fires on 0 inputs and its main-loss gradient is exactly "
           f"{g_main[3]:.1e}.")
-    print(f"  With the auxiliary dead-latent term its gradient is {g_aux:.4f} "
-          f"--- nonzero,\n  which is the only reason it can ever come back.")
+    print(f"  With the AuxK term its encoder gradient is {g_aux:.4f} --- nonzero, so")
+    print("  the latent is no longer frozen; whether it revives depends on the sign")
+    print("  the residual asks for.")
+    print(f"  Put a ReLU on the AuxK pre-activations and it is {g_gated:.1e} again.")
 
 # ---------------------------------------------------------------------------
 # 5. A hand-built induction circuit  (Section 16.3.1)
@@ -426,7 +469,7 @@ def induction_demo():
 
 
 # ---------------------------------------------------------------------------
-# 6. Activation patching  (Definitions 16.2 and 16.3)
+# 6. Activation patching  (denoising and noising definitions)
 # ---------------------------------------------------------------------------
 
 def patching_demo(circuit, tokens):
@@ -448,9 +491,9 @@ def patching_demo(circuit, tokens):
 
     print(f"logit margin for the correct token B={target}, at position 7\n")
     print(f"  clean run                                  {mc:+.4f}")
-    print(f"  noising  (Def 16.3: ablate prev-token head) {mx:+.4f}"
+    print(f"  noising   (ablate the prev-token head)     {mx:+.4f}"
           f"   -> behaviour {'destroyed' if mx <= 0 else 'survives'}")
-    print(f"  denoising (Def 16.2: patch the clean value) {mp:+.4f}"
+    print(f"  denoising (patch the clean value back in)  {mp:+.4f}"
           f"   -> {restored:.1f}% of the difference restored")
     print(f"\n  argmax under ablation: {int(np.argmax(corrupt_logits[7]))} "
           f"(correct answer is {target})")
@@ -499,17 +542,17 @@ def steering_demo(d=64, n=400, trials=200000):
 # ---------------------------------------------------------------------------
 
 def cot_demo(n=4000):
-    """The measurement protocol of Definition 16.4, on a task where the ground
+    """The measurement protocol of the faithfulness definition, on a task where the ground
     truth is known by construction.
 
-    Two solvers answer multi-step arithmetic. Each emits a visible trace of
-    intermediate values. The EASY instances have a shortcut (the answer is
-    determined by the first operand alone); the HARD ones do not. Ablating
-    the trace tells you which solver was actually using it.
+    A solver answers multi-step arithmetic and emits a visible trace of
+    intermediate values. On the EASY instances its answer takes a shortcut
+    (determined by the first operand alone); on the HARD ones it reads the
+    trace. Ablating the trace tells you which case you are in.
 
     This is the protocol, not a language model: the point is that faithfulness
-    is measured by intervention, and that the same solver looks faithful or
-    unfaithful depending only on whether the task needed the steps.
+    is measured by intervention, and that the same protocol labels a solver
+    faithful or unfaithful depending on whether its answer reads the trace.
     """
     rng = np.random.default_rng(SEED)
 
@@ -541,7 +584,7 @@ def cot_demo(n=4000):
         verdict = "faithful (trace load-bearing)" if drop > 0.5 else \
                   "UNFAITHFUL (answer ignores the trace)"
         print(f"{label:>6}  {intact:16.3f}  {ablated:17.3f}  {drop:7.3f}  {verdict}")
-    print("\n  This reproduces the chapter's empirical picture: a trace that")
+    print("\n  This illustrates the chapter's reading: a trace that")
     print("  survives ablation was not driving the computation, however")
     print("  plausible it reads. Faithfulness is a property of the task-model")
     print("  pair, measured causally --- never something a trace displays on")
@@ -566,7 +609,7 @@ def main():
     rule("5. Induction circuit by hand, via K-composition  (Section 16.3.1)")
     circuit, tokens = induction_demo()
 
-    rule("6. Activation patching: noising and denoising  (Def. 16.2, 16.3)")
+    rule("6. Activation patching: noising and denoising  (Section 16.3.2)")
     patching_demo(circuit, tokens)
 
     rule("7. Difference-of-means steering vector  (Eq. 16.12)")

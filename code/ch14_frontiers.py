@@ -16,7 +16,7 @@ def softmax(z):
 
 def fisher_categorical(logits, n_samples=2000, rng=None):
     """
-    Empirical Fisher for a categorical distribution p(y|x; θ) = softmax(logits).
+    Monte Carlo (true) Fisher for a categorical distribution p(y|x; θ) = softmax(logits).
     F ≈ E[∇log p · ∇log p^T]  (outer-product form).
     logits: (K,)  →  F: (K, K)
     """
@@ -55,7 +55,7 @@ def denoise_score_matching_loss(score_fn, x_clean, sigma, n_samples=200, rng=Non
     d = len(x_clean)
     eps    = rng.normal(size=(n_samples, d))
     x_noisy = x_clean + sigma * eps        # (n_samples, d)
-    target  = -eps / sigma                 # = -(x̃ - x)/σ² * σ = score of q(x̃|x)
+    target  = -eps / sigma                 # = -(x̃ - x)/σ² (conditional score of q(x̃|x))
     loss = 0.0
     for i in range(n_samples):
         s = score_fn(x_noisy[i])

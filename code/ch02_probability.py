@@ -23,7 +23,8 @@ def gaussian_map(x, mu0, tau2, sigma2):
     Likelihood: xᵢ | μ ~ N(μ, σ²)
     Posterior:  μ | x ~ N(μ_post, σ_post²)
     where σ_post² = 1 / (n/σ² + 1/τ²),  μ_post = σ_post²(Σxᵢ/σ² + μ₀/τ²)
-    Reduces to Ridge regression: MAP = (precision-weighted) average of prior and data.
+    Special case of ridge (MAP with Gaussian prior) with an intercept-only model:
+    MAP = (precision-weighted) average of prior and data.
     """
     n = len(x)
     prec_post = n / sigma2 + 1 / tau2

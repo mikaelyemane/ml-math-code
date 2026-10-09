@@ -18,13 +18,13 @@ Three kinds of files live here:
 | `ch02_probability.py` | Ch. 2 — Probability | Gaussian MLE, MAP with Gaussian prior, multivariate conditional, Beta-Binomial |
 | `ch03_information_theory.py` | Ch. 3 — Information Theory | Entropy, cross-entropy, KL (H(p,q)=H(p)+KL identity), mutual information, Gaussian KL |
 | `ch04_linear_models.py` | Ch. 4 — Linear Models | Normal equations, Ridge regression, logistic regression, softmax CE gradient check, ISTA for Lasso |
-| `ch05_optimizers.py` | Ch. 5 — Optimization | SGD, momentum, Adam with bias correction, Newton step on a quadratic |
+| `ch05_optimizers.py` | Ch. 5 — Optimization | Gradient descent, momentum, Adam with bias correction, Newton step on a quadratic |
 | `ch06_gp_regression.py` | Ch. 6 — Kernel Methods | RBF kernel, GP posterior (Cholesky), 95% credible band |
 | `ch07_backprop.py` | Ch. 7 — Shallow Networks | 2-layer ReLU net forward/backward, gradient check, XOR demo |
 | `ch08_batch_norm.py` | Ch. 8 — Deep Networks | BatchNorm forward, 3-term backward (dx, dγ, dβ), gradient check |
 | `ch09_convolutions.py` | Ch. 9 — Convolutions | 1-D conv as Toeplitz matrix, 2-D conv forward/backward, receptive field |
 | `ch10_recurrent.py` | Ch. 10 — Recurrent Networks | RNN forward + BPTT (gradient check, max err ~5e-12), LSTM with all four gates |
-| `ch11_attention.py` | Ch. 11 — Attention | SDPA, causal mask, softmax Jacobian, multi-head attention, KV-cache step |
+| `ch11_attention.py` | Ch. 11 — Attention | SDPA, causal mask, softmax Jacobian, SDPA backward + finite-difference check, multi-head attention, KV-cache step |
 | `ch12_vae.py` | Ch. 12 — Generative Models | VAE with exact reparameterised gradients (gradient-checked) and a 200-step ELBO climb on held-out data; GMM-EM; DDPM forward marginal (closed form vs. iterated) and an oracle-noise ancestral sampler at the chapter's T = 1000, with T = 200 alongside to show the terminal-SNR bias |
 | `ch13_policy_gradient.py` | Ch. 13 — RL | REINFORCE with running-mean baseline (variance reduction shown), PPO clipped surrogate vs vanilla PG |
 | `ch14_frontiers.py` | Ch. 14 — Frontiers | Empirical Fisher, natural gradient, denoising score matching, LoRA savings |

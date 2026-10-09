@@ -73,8 +73,9 @@ Each lever is priced on its own, at the same SLO and the same U.
 ## Residual risk to write down
 
 - **Prefill isn't in T_out.**
-  - A 500-token prompt is 7 × 10¹³ FLOPs, or about 142 ms of an H100 at 50% MFU. TTFT is fine.
-  - Across the fleet it is not small: 174 messages/s at peak × 0.142 s ≈ **25 GPU-equivalents** of prefill compute on top of the 33 decode GPUs.
+  - A 500-token prompt is 7 × 10¹³ FLOPs, or about 118 ms of an H100 at 60% MFU. TTFT is fine.
+  - Across the fleet it is not small: 174 messages/s at peak × 0.118 s ≈ **20 GPU-equivalents** of prefill compute on top of the 33 decode GPUs.
   - Most of a chat prompt is conversation history, so prefix caching ("The KV-Cache Economy") is what keeps this from doubling the fleet. Put the cache hit rate on the dashboard next to duty cycle.
+- **Queueing headroom.** The chapter's single-GPU M/M/1 bound puts the p95 duty cycle near ρ ≈ 0.5. A 33-GPU pool behind one scheduler absorbs variability far better than that bound, so ρ ≈ 0.5 is pessimistic here, but U = 0.6 at full B_max is not free either.
 - **The 60% duty cycle is an autoscaling promise.** If the fleet can't scale down at night, the budget case is the $2,376/day one, and FP8 KV plus routing is required, not optional.
 - **The live context assumption.** Everything above uses the chapter's 1K tokens of live context. Five-turn sessions grow past that. M_KV is linear in context, so B_max shrinks in proportion. Re-run the script with `LIVE_CONTEXT_TOKENS` at your measured p50.
