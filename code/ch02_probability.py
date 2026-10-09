@@ -65,7 +65,7 @@ def mvn_conditional(mu, Sigma, x2, idx1, idx2):
 
 def beta_posterior(heads, tails, alpha0=1.0, beta0=1.0):
     """
-    Beta-Binomial conjugate model.
+    Beta-Bernoulli conjugate model.
     Prior: θ ~ Beta(α₀, β₀).  Posterior: θ | data ~ Beta(α₀+heads, β₀+tails).
     """
     return alpha0 + heads, beta0 + tails
@@ -96,6 +96,6 @@ if __name__ == "__main__":
     mu_c, S_c = mvn_conditional(mu, Sigma, x2_obs, idx1=[0], idx2=[1, 2])
     print(f"\nConditional x₁ | x₂=x₂_obs:  μ={mu_c.round(3)}  σ²={S_c.round(3)}")
 
-    # Beta-Binomial
+    # Beta-Bernoulli
     a, b = beta_posterior(heads=14, tails=6, alpha0=1, beta0=1)
     print(f"\nBeta posterior after 14H/6T: Beta({a},{b})  mode={(a-1)/(a+b-2):.3f}  MLE={14/20:.3f}")

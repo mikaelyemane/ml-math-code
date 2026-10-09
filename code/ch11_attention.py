@@ -159,3 +159,7 @@ if __name__ == "__main__":
     Wo = rng.normal(size=(d_model, d_model)) * 0.1
     out_mha = multi_head_attention(X, Wq, Wk, Wv, Wo, n_heads2, causal=True)
     print(f"\nMHA output shape: {out_mha.shape}  (expected ({n}, {d_model}))")
+
+    # KV cache: decoding the last token from a cache of the first n-1 tokens
+    out_kv, _, _ = kv_cache_step(Q[-1:], K[:-1], V[:-1], K[-1:], V[-1:])
+    print("KV-cache step matches last causal row:", np.allclose(out_kv, out_causal[-1:]))

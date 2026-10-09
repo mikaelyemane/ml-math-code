@@ -17,7 +17,7 @@ Usage:
 
     python3 nano_gpt.py                 # 2 layers, 64 dim, 100 steps, CPU
     python3 nano_gpt.py --big           # 4 layers, 4 heads, 192 dim, 2000 steps
-    python3 nano_gpt.py --sample-only   # generate from an existing checkpoint
+    python3 nano_gpt.py --sample-only   # generate from the checkpoint a training run saved
 
 The default run is deliberately tiny: it finishes in well under a minute on a
 laptop CPU and the loss should fall from ~4.17 (random init over 65 characters,
@@ -343,10 +343,14 @@ def main():
     print(f"random-init loss should be ~log({data.vocab_size}) = "
           f"{math.log(data.vocab_size):.3f}")
 
-    opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.1,
-                            betas=(0.9, 0.95))
-
-    if not args.sample_only:
+    ckpt = "nano_gpt_big.pt" if args.big else "nano_gpt.pt"
+    if args.sample_only:
+        if not os.path.exists(ckpt):
+            raise SystemExit(f"no checkpoint {ckpt}: train first")
+        model.load_state_dict(torch.load(ckpt, map_location=device))
+    else:
+        opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.1,
+                                betas=(0.9, 0.95))
         model.train()
         first = None
         for step in range(1, steps + 1):
@@ -361,6 +365,8 @@ def main():
             if step % max(1, steps // 10) == 0 or step == 1:
                 print(f"  step {step:5d}   loss {loss.item():.4f}")
         print(f"\nloss {first:.3f} -> {loss.item():.3f}")
+        torch.save(model.state_dict(), ckpt)
+        print(f"saved {ckpt}")
 
     print("\n--- sample ---")
     prompt = "ROMEO:" if "ROMEO:" in text else text[:6]

@@ -82,7 +82,9 @@ def packing_demo(eps=0.5):
         prev = k
 
     print("\n  Orthogonal capacity doubles when d doubles. Near-orthogonal")
-    print("  capacity is squared. That gap is the whole content of the theorem.")
+    print("  capacity is roughly squared (exactly so for the e^{-d eps^2/2} bound;")
+    print("  the exact tail adds a polynomial factor). That gap is the whole")
+    print("  content of the theorem.")
 
     # Empirical check. The union bound proves a valid packing EXISTS with
     # positive probability -- it does not promise that any single random draw
@@ -239,7 +241,9 @@ def auxk_grads(x, pre, recon, W_dec, dead, k_aux=K_AUX, relu_gate=False):
 def train_sae(rng, X, m, lam=1.0, steps=4000, lr=2e-2, tied=True, aux=True,
               dead_after=100):
     """Fit Eq. (16.5) by gradient descent with a ReLU encoder, renormalising
-    each decoder row to unit norm after every step (the constraint in 16.5).
+    each decoder row to unit norm after every step (the constraint in 16.5;
+    W_dec is stored (m, d), the transpose of the book's W, so its rows are
+    the book's columns).
 
     The two standard fixes from Gao et al. (2024) can be switched separately:
       * tied=True: initialise the encoder as the decoder transpose, and
@@ -303,25 +307,27 @@ def sae_demo(d=16, m=256, n=4000, k_true=3):
 
     print(f"{n} activations in R^{d}, generated from {m} sparse atoms "
           f"({k_true} active per sample)\n")
-    print(f"live = fires on >= {MIN_FIRES} of {n} inputs; 'rare' = fires on 1-{MIN_FIRES - 1}\n")
-    print(f"{'training':>22}  {'live latents':>12}  {'dead':>8}  {'rare':>5}  {'recon MSE':>10}  {'mean L0':>8}")
-    print("-" * 77)
+    print(f"live = fires on >= {MIN_FIRES} of {n} inputs; 'rare' = fires on 1-{MIN_FIRES - 1};")
+    print("'never' = fires on none (dead); not live = rare + never\n")
+    print(f"{'training':>22}  {'live latents':>12}  {'not live':>8}  {'rare':>5}  {'never':>5}  {'recon MSE':>10}  {'mean L0':>8}")
+    print("-" * 84)
     arms = (("unmitigated", False, False), ("AuxK only", False, True),
             ("tied init only", True, False), ("tied init + AuxK", True, True))
     for label, tied, aux in arms:
         fires, mse, l0 = train_sae(np.random.default_rng(SEED), X, m, tied=tied, aux=aux)
         alive = fires >= MIN_FIRES
         rare = int(((fires > 0) & ~alive).sum())
-        dead_pct = 100.0 * (1 - alive.mean())
-        print(f"{label:>22}  {int(alive.sum()):12d}  {dead_pct:7.1f}%  {rare:5d}  {mse:10.5f}  {l0:8.2f}")
+        never = int((fires == 0).sum())
+        not_live_pct = 100.0 * (1 - alive.mean())
+        print(f"{label:>22}  {int(alive.sum()):12d}  {not_live_pct:7.1f}%  {rare:5d}  {never:5d}  {mse:10.5f}  {l0:8.2f}")
     print("\n  Same data, seed and encoder bias in every arm; only the two fixes vary.")
     print("  On this L1/ReLU toy, AuxK at most moves dead latents to the edge of")
     print("  firing (the 'rare' column) and leaves the live count and recon MSE")
     print("  where they were; tied init is what keeps latents alive here. AuxK was")
     print("  designed for Gao et al.'s TopK SAEs.")
-    print("\n  Honest scope: the 90%-dead figure Gao et al. report is a")
-    print("  production-scale phenomenon; a 4000-sample toy does not reproduce")
-    print("  that rate. The MECHANISM behind it is checkable right here.\n")
+    print("\n  Scope: the toy's non-live rate is in the range Gao et al. report")
+    print("  (up to 90%), but a 4000-sample, 256-latent L1 toy is not a")
+    print("  measurement of their TopK result. Only the MECHANISM below carries over.\n")
     dead_latent_mechanism()
 
 

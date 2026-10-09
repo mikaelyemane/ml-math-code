@@ -32,7 +32,7 @@ def rnn_forward(X, h0, Wx, Wh, b, Wy, by):
 def rnn_bptt(X, Y_target, H, h0, Wx, Wh, b, Wy, by):
     """
     Backpropagation through time (BPTT).
-    Loss = (1/T) Σ_t ||y_t - Y_target_t||^2 / 2
+    Loss = 0.5 * mean over all T*d_y entries of (y - Y_target)**2
     Returns gradients dWx, dWh, db, dWy, dby.
     """
     T, d_x = X.shape

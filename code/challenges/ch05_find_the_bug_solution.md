@@ -49,7 +49,7 @@ Take $t = 1$ and a single coordinate with gradient $g$:
 So the correct update is $-\eta \cdot g/\lvert g\rvert = \pm\eta$, and the buggy
 one is $-\eta \cdot 100g/\lvert g\rvert = \pm 100\eta$.
 
-**The ratio is $\dfrac{1-\beta_2}{1-\beta_1} = \dfrac{0.001}{0.1} = 100$** —
+**The ratio is $\dfrac{1-\beta_1}{1-\beta_2} = \dfrac{0.1}{0.001} = 100$** —
 which is precisely the `|update| / lr = 100.0` the script prints. That round
 number is the fingerprint: nothing in the data or the loss could produce it.
 It falls out of the two hyperparameters alone.

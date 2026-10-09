@@ -5,7 +5,7 @@ A benign convex problem: full-batch least-squares regression, 400 samples,
 cliffs. Adam should walk it down to the noise floor (~5e-5) without drama.
 
 It does not. The loss starts at 24.2, and the very first update sends it to
-1.1e4 --- 460x *worse* than doing nothing at all. It thrashes for twenty-odd
+1.1e4 --- 460x *worse* than doing nothing at all. It thrashes for forty-odd
 steps, then grinds back down and eventually reaches the floor anyway, which is
 what makes this bug so good at surviving code review.
 
