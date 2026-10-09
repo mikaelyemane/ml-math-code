@@ -15,7 +15,7 @@ Three kinds of files live here:
 | File | Chapter | What it implements |
 |---|---|---|
 | `ch01_linalg.py` | Ch. 1 — Foundations | Economy SVD, Eckart–Young low-rank approx, gradient of quadratic forms, finite-difference Jacobian |
-| `ch02_probability.py` | Ch. 2 — Probability | Gaussian MLE, MAP with Gaussian prior, multivariate conditional, Beta-Binomial |
+| `ch02_probability.py` | Ch. 2 — Probability | Gaussian MLE, MAP with Gaussian prior, multivariate conditional, Beta-Bernoulli |
 | `ch03_information_theory.py` | Ch. 3 — Information Theory | Entropy, cross-entropy, KL (H(p,q)=H(p)+KL identity), mutual information, Gaussian KL |
 | `ch04_linear_models.py` | Ch. 4 — Linear Models | Normal equations, Ridge regression, logistic regression, softmax CE gradient check, ISTA for Lasso |
 | `ch05_optimizers.py` | Ch. 5 — Optimization | Gradient descent, momentum, Adam with bias correction, Newton step on a quadratic |
