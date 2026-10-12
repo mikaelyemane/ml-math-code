@@ -1,6 +1,6 @@
 # Article notebooks
 
-One notebook per article in the *Math for ML Engineers* launch series, plus article 16 on METR's agent time horizons. Each runs the article's code in order and reproduces every number it quotes, plus its figure. They need only NumPy and matplotlib; notebook 16 also downloads METR's public runs file (15 MB) on first run.
+One notebook per article in the *Math for ML Engineers* launch series, plus article 16 on METR's agent time horizons and articles 21–24 on ML engineering practice. Each runs the article's code in order and reproduces every number it quotes, plus its figure where it has one (timings vary by machine). Notebooks 01–16 need only NumPy and matplotlib; notebook 16 also downloads METR's public runs file (15 MB) on first run. Notebooks 21–24 install what they need in their first cell (scikit-learn, pandas, Numba; PySpark, DuckDB and Polars for 23, which also needs Java 17+ and writes 1.2 GB of synthetic data on first run).
 
 | # | Article | Notebook |
 |---|---|---|
@@ -20,5 +20,9 @@ One notebook per article in the *Math for ML Engineers* launch series, plus arti
 | 14 | He init keeps the gradient norm and only 7% of the directions | [`14-residual-spectrum.ipynb`](14-residual-spectrum.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/14-residual-spectrum.ipynb) |
 | 15 | Why test error spikes 200× when features equal samples | [`15-double-descent-in-numpy.ipynb`](15-double-descent-in-numpy.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/15-double-descent-in-numpy.ipynb) |
 | 16 | METR's agent-horizon data can't tell a one-week ceiling from none | [`16-metr-time-horizon.ipynb`](16-metr-time-horizon.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/16-metr-time-horizon.ipynb) |
+| 21 | Why MLOps Matters More Than Your Model | [`21-mlops-matters.ipynb`](21-mlops-matters.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/21-mlops-matters.ipynb) |
+| 22 | Python for Machine Learning: The Honest Pros and Cons, and Why It Still Wins | [`22-python-for-ml.ipynb`](22-python-for-ml.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/22-python-for-ml.ipynb) |
+| 23 | Is Spark Still Relevant in 2026? DuckDB Was 7x Faster. Amazon's Data Complicates It. | [`23-is-spark-still-relevant.ipynb`](23-is-spark-still-relevant.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/23-is-spark-still-relevant.ipynb) |
+| 24 | Seconds to Minutes Cut My Model's Latency Effect by 99.7% | [`24-abstraction-defaults.ipynb`](24-abstraction-defaults.ipynb) · [Colab](https://colab.research.google.com/github/mikaelyemane/ml-math-code/blob/main/notebooks/articles/24-abstraction-defaults.ipynb) |
 
 These files are generated from the article sources by `make_notebooks.py` in the book repository. Edit the articles, then regenerate, rather than editing a notebook by hand.
