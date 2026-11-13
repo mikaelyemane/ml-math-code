@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="v" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#440154"/>
+      <stop offset=".35" stop-color="#31688e"/>
+      <stop offset=".65" stop-color="#35b779"/>
+      <stop offset="1" stop-color="#fde725"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="12" fill="#17122b"/>
+  <!-- nabla: the gradient operator -->
+  <path d="M10 15 H54 L32 52 Z M20.5 21 L32 40.5 L43.5 21 Z" fill="url(#v)" fill-rule="evenodd"/>
+</svg>
